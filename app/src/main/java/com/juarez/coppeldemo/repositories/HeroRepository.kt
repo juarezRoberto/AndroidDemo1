@@ -83,13 +83,13 @@ class HeroRepository {
 
     suspend fun getHeroBiography(heroId: Int): CustomResponse<Biography> {
         var customResponse: CustomResponse<Biography>
-        var biography = Biography(null, null, null, null, null, null, null)
+        var biography = Biography(null, null, null, null, null, null, null, null)
         try {
             val bio = WebService.service().getHeroBiography(heroId)
             if (bio.isSuccessful) {
                 bio.body()?.let {
                     biography = Biography(
-                        it.fullName, it.alterEgos, it.aliases, it.placeOfBirth,
+                        it.name, it.fullName, it.alterEgos, it.aliases, it.placeOfBirth,
                         it.firstAppearance, it.publisher, it.alignment
                     )
                 }

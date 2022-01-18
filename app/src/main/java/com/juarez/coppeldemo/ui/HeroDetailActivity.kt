@@ -39,6 +39,7 @@ class HeroDetailActivity : AppCompatActivity() {
                     progressCombat.progress = combat?.convertToInt() ?: 0
                 }
                 with(it.biography) {
+                    txtBioName.text = name ?: Constants.NO_AVAILABLE
                     txtFullName.text =
                         if (fullName.isNullOrEmpty()) Constants.NO_AVAILABLE else fullName
                     txtPlaceBirth.text = placeOfBirth ?: Constants.NO_AVAILABLE

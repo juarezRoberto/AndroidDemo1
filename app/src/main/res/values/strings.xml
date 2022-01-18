@@ -18,5 +18,6 @@
     <string name="title_biography">Biography</string>
     <string name="title_power_stats">Power Stats</string>
     <string name="img_desc_photo">photo</string>
+    <string name="placeholder_subtitle_name">Name:</string>
 
 </resources>

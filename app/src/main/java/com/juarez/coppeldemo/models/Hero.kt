@@ -26,6 +26,7 @@ data class PowerStats(
 )
 
 data class Biography(
+    val name: String?,
     @SerializedName("full-name")
     val fullName: String?,
     @SerializedName("alter-egos")
