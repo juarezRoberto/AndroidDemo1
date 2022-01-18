@@ -1,6 +1,7 @@
 package com.juarez.coppeldemo.api
 
 import com.juarez.coppeldemo.BuildConfig
+import com.juarez.coppeldemo.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -18,11 +19,9 @@ object WebService {
         .addInterceptor(HttpInterceptor())
         .build()
 
-    private const val BASE_URL = "https://superheroapi.com/"
-
     fun service(): HeroAPI {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

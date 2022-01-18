@@ -13,9 +13,11 @@
         android:theme="@style/Theme.CoppelDemo">
         <activity
             android:name=".ui.HeroDetailActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ui.MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

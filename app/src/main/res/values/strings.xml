@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">CoppelDemo</string>
+    <string name="placeholder_power">Power:</string>
+    <string name="placeholder_intelligence">Intelligence:</string>
+    <string name="placeholder_strength">Strength:</string>
+    <string name="placeholder_speed">Speed:</string>
+    <string name="placeholder_durability">Durability:</string>
+    <string name="placeholder_combat">Combat:</string>
+    <string name="placeholder_full_name">Full name:</string>
+    <string name="placeholder_dots">...</string>
+    <string name="placeholder_first_appearance">First Appearance:</string>
+    <string name="placeholder_publisher">Publisher:</string>
+    <string name="placeholder_alignment">Alignment:</string>
+    <string name="placeholder_name">name</string>
+    <string name="placeholder_place_of_birth">Place of birth:</string>
+
+    <string name="title_superhero_api">SuperHero API</string>
+    <string name="title_biography">Biography</string>
+    <string name="title_power_stats">Power Stats</string>
+    <string name="img_desc_photo">photo</string>
+
 </resources>
