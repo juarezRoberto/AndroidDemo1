@@ -44,7 +44,7 @@ class HeroRepository {
 
             val hero = Hero(
                 heroId.toString(),
-                powerStatsRes.data?.name ?: "",
+                powerStatsRes.data?.name!!,
                 Image(""),
                 powerStatsRes.data!!,
                 bioRes.data!!,

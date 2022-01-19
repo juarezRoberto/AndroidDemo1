@@ -1,4 +1,4 @@
-package com.juarez.coppeldemo.ui
+package com.juarez.coppeldemo.ui.mainactivity
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,8 +13,9 @@ import com.juarez.coppeldemo.adapters.HeroesAdapter
 import com.juarez.coppeldemo.databinding.ActivityMainBinding
 import com.juarez.coppeldemo.models.Hero
 import com.juarez.coppeldemo.repositories.HeroRepository
-import com.juarez.coppeldemo.viewmodels.HeroViewModel
-import com.juarez.coppeldemo.viewmodels.HeroViewModelFactory
+import com.juarez.coppeldemo.ui.herodetailactivity.HeroDetailActivity
+import com.juarez.coppeldemo.utils.Constants
+import com.juarez.coppeldemo.utils.HeroViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -48,8 +49,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun onItemClicked(hero: Hero) {
         val intent = Intent(this, HeroDetailActivity::class.java)
-        intent.putExtra("hero_id", hero.id.toInt())
-        intent.putExtra("hero_url", hero.image.url)
+        intent.putExtra(Constants.EXTRA_HERO_ID, hero.id.toInt())
+        intent.putExtra(Constants.EXTRA_HERO_URL, hero.image.url)
         startActivity(intent)
     }
 }

@@ -4,10 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/JUAREZ/Documents/myworkspace/android/CoppelDemo/app/src/main/res/drawable/bacground_black_gradient.xml" value="0.2703125" />
-        <entry key="..\:/Users/JUAREZ/Documents/myworkspace/android/CoppelDemo/app/src/main/res/layout/activity_hero_detail.xml" value="0.6" />
+        <entry key="..\:/Users/JUAREZ/Documents/myworkspace/android/CoppelDemo/app/src/main/res/layout/activity_hero_detail.xml" value="0.2" />
         <entry key="..\:/Users/JUAREZ/Documents/myworkspace/android/CoppelDemo/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Users/JUAREZ/Documents/myworkspace/android/CoppelDemo/app/src/main/res/layout/fragment_biography.xml" value="0.264" />
         <entry key="..\:/Users/JUAREZ/Documents/myworkspace/android/CoppelDemo/app/src/main/res/layout/item_hero.xml" value="0.4" />
         <entry key="..\:/Users/JUAREZ/Documents/myworkspace/android/CoppelDemo/app/src/main/res/layout/item_hero_loading_state.xml" value="0.264" />
+        <entry key="..\:/Users/JUAREZ/Documents/myworkspace/android/CoppelDemo/app/src/main/res/menu/navigation_menu.xml" value="0.20854700854700856" />
       </map>
     </option>
   </component>

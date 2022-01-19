@@ -19,5 +19,15 @@
     <string name="title_power_stats">Power Stats</string>
     <string name="img_desc_photo">photo</string>
     <string name="placeholder_subtitle_name">Name:</string>
+    <string name="placeholder_relatives">Relatives:</string>
+    <string name="placeholder_eye_color">Eye color:</string>
+    <string name="placeholder_hair_color">Hair color:</string>
+    <string name="placeholder_group_affiliation">Group affiliation:</string>
+    <string name="title_Connections">Connections</string>
+    <string name="placeholder_weight">Weight:</string>
+    <string name="placeholder_height">Height:</string>
+    <string name="placeholder_race">Race:</string>
+    <string name="placeholder_gender">Gender:</string>
+    <string name="title_appearance">Appearance</string>
 
 </resources>
