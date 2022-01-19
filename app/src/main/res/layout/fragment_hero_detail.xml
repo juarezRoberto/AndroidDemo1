@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.herodetailactivity.HeroDetailActivity">
-
+    tools:context=".ui.herodetail.HeroDetailFragment">
 
     <ScrollView
         android:layout_width="match_parent"

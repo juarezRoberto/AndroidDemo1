@@ -1,33 +1,41 @@
-package com.juarez.coppeldemo.ui.herodetailactivity
+package com.juarez.coppeldemo.ui.herodetail
 
 import android.os.Bundle
-import androidx.activity.viewModels
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import com.juarez.coppeldemo.databinding.ActivityHeroDetailBinding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.juarez.coppeldemo.databinding.FragmentHeroDetailBinding
 import com.juarez.coppeldemo.extensions.convertToInt
 import com.juarez.coppeldemo.extensions.loadImage
 import com.juarez.coppeldemo.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HeroDetailActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityHeroDetailBinding
+class HeroDetailFragment : Fragment() {
+
+    private var _binding: FragmentHeroDetailBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: HeroDetailViewModel by viewModels()
     private var heroId = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityHeroDetailBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        heroId = intent.getIntExtra(Constants.EXTRA_HERO_ID, 0)
-        val heroUrl = intent.getStringExtra(Constants.EXTRA_HERO_URL)
-        binding.imgDetailPhoto.loadImage(heroUrl)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentHeroDetailBinding.inflate(inflater, container, false)
+        arguments?.getInt(Constants.BUNDLE_HERO_ID)?.let {
+            heroId = it
+        }
+        arguments?.getString(Constants.BUNDLE_HERO_URL)?.let {
+            binding.imgDetailPhoto.loadImage(it)
+        }
 
         viewModel.getHeroDetail(heroId)
-        viewModel.hero.observe(this, {
+        viewModel.hero.observe(viewLifecycleOwner, {
             with(binding) {
                 with(it.powerStats) {
                     progressIntelligence.progress = intelligence?.convertToInt() ?: 0
@@ -60,22 +68,28 @@ class HeroDetailActivity : AppCompatActivity() {
                 }
             }
         })
-        viewModel.loading.observe(this, {
+        viewModel.loading.observe(viewLifecycleOwner, {
             binding.progressBarHeroDetail.isVisible = it
         })
-        viewModel.error.observe(this, {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Aviso")
+        viewModel.error.observe(viewLifecycleOwner, {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle(Constants.ALERT_TITLE)
             builder.setMessage(it)
-            builder.setPositiveButton("Reintentar") { dialog, _ ->
+            builder.setPositiveButton(Constants.ALERT_RETRY) { dialog, _ ->
                 viewModel.getHeroDetail(heroId)
                 dialog.dismiss()
             }
-            builder.setNegativeButton("Cancelar") { dialog, _ ->
+            builder.setNegativeButton(Constants.ALERT_CANCEL) { dialog, _ ->
                 dialog.dismiss()
             }
             builder.show()
         })
 
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

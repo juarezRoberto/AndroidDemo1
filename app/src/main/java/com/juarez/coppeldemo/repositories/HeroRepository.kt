@@ -47,7 +47,7 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
                 heroId.toString(),
                 powerStatsRes.data?.name!!,
                 Image(""),
-                powerStatsRes.data!!,
+                powerStatsRes.data,
                 bioRes.data!!,
                 appearanceRes.data!!,
                 connectionsRes.data!!
@@ -60,25 +60,20 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
 
     suspend fun getHeroPowerStats(heroId: Int): CustomResponse<PowerStats> {
         var customResponse: CustomResponse<PowerStats>
-        var powerStats = PowerStats("", null, null, null, null, null, null)
+        var powerStats = PowerStats(null, null, null, null, null, null, null)
         try {
             val power = heroAPI.getHeroPowerStats(heroId)
-            if (power.isSuccessful) {
-                power.body()?.let {
-                    powerStats = PowerStats(
-                        it.name, it.intelligence, it.strength, it.speed, it.durability,
-                        it.power, it.combat
-                    )
-                }
-                customResponse = CustomResponse(true, powerStats, null)
-            } else {
-                customResponse = CustomResponse(false, powerStats, Constants.GENERAL_ERROR)
+            if (!power.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
+            power.body()?.let {
+                powerStats = PowerStats(
+                    it.name, it.intelligence, it.strength, it.speed, it.durability,
+                    it.power, it.combat
+                )
             }
-
+            customResponse = CustomResponse(true, powerStats, null)
         } catch (e: Exception) {
             customResponse = CustomResponse(false, powerStats, e.message.toString())
         }
-
         return customResponse
     }
 
@@ -87,22 +82,18 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
         var biography = Biography(null, null, null, null, null, null, null, null)
         try {
             val bio = heroAPI.getHeroBiography(heroId)
-            if (bio.isSuccessful) {
-                bio.body()?.let {
-                    biography = Biography(
-                        it.name, it.fullName, it.alterEgos, it.aliases, it.placeOfBirth,
-                        it.firstAppearance, it.publisher, it.alignment
-                    )
-                }
-                customResponse = CustomResponse(true, biography, null)
-            } else {
-                customResponse = CustomResponse(false, biography, Constants.GENERAL_ERROR)
+            if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
+            bio.body()?.let {
+                biography = Biography(
+                    it.name, it.fullName, it.alterEgos, it.aliases, it.placeOfBirth,
+                    it.firstAppearance, it.publisher, it.alignment
+                )
             }
+            customResponse = CustomResponse(true, biography, null)
 
         } catch (e: Exception) {
             customResponse = CustomResponse(false, biography, e.message.toString())
         }
-
         return customResponse
     }
 
@@ -111,21 +102,17 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
         var appearance = Appearance(null, null, null, null, null, null)
         try {
             val bio = heroAPI.getHeroAppearance(heroId)
-            if (bio.isSuccessful) {
-                bio.body()?.let {
-                    appearance = Appearance(
-                        it.gender, it.race, it.height, it.weight, it.eyeColor, it.hairColor
-                    )
-                }
-                customResponse = CustomResponse(true, appearance, null)
-            } else {
-                customResponse = CustomResponse(false, appearance, Constants.GENERAL_ERROR)
+            if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
+            bio.body()?.let {
+                appearance = Appearance(
+                    it.gender, it.race, it.height, it.weight, it.eyeColor, it.hairColor
+                )
             }
+            customResponse = CustomResponse(true, appearance, null)
 
         } catch (e: Exception) {
             customResponse = CustomResponse(false, appearance, e.message.toString())
         }
-
         return customResponse
     }
 
@@ -134,19 +121,15 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
         var connections = Connections(null, null)
         try {
             val bio = heroAPI.getHeroConnections(heroId)
-            if (bio.isSuccessful) {
-                bio.body()?.let {
-                    connections = Connections(it.groupAffiliation, it.relatives)
-                }
-                customResponse = CustomResponse(true, connections, null)
-            } else {
-                customResponse = CustomResponse(false, connections, Constants.GENERAL_ERROR)
+            if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
+            bio.body()?.let {
+                connections = Connections(it.groupAffiliation, it.relatives)
             }
+            customResponse = CustomResponse(true, connections, null)
 
         } catch (e: Exception) {
             customResponse = CustomResponse(false, connections, e.message.toString())
         }
-
         return customResponse
     }
 }

@@ -15,7 +15,7 @@ data class Hero(
 data class Image(val url: String)
 
 data class PowerStats(
-    val name: String,
+    val name: String?,
     val intelligence: String?,
     val strength: String?,
     val speed: String?,

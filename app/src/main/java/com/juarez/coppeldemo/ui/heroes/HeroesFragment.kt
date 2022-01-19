@@ -1,33 +1,39 @@
-package com.juarez.coppeldemo.ui.mainactivity
+package com.juarez.coppeldemo.ui.heroes
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
+import com.juarez.coppeldemo.R
 import com.juarez.coppeldemo.adapters.HeroLoadStateAdapter
 import com.juarez.coppeldemo.adapters.HeroesAdapter
-import com.juarez.coppeldemo.databinding.ActivityMainBinding
+import com.juarez.coppeldemo.databinding.FragmentHeroesBinding
 import com.juarez.coppeldemo.models.Hero
-import com.juarez.coppeldemo.ui.herodetailactivity.HeroDetailActivity
 import com.juarez.coppeldemo.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+class HeroesFragment : Fragment() {
+    private var _binding: FragmentHeroesBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: HeroViewModel by viewModels()
     private val heroesAdapter = HeroesAdapter { onItemClicked(it) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentHeroesBinding.inflate(inflater, container, false)
 
         binding.recyclerHeroes.apply {
             layoutManager = GridLayoutManager(context, 2)
@@ -35,7 +41,7 @@ class MainActivity : AppCompatActivity() {
                 footer = HeroLoadStateAdapter(heroesAdapter::retry)
             )
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.heroes.collectLatest { heroesAdapter.submitData(it) }
         }
 
@@ -43,12 +49,21 @@ class MainActivity : AppCompatActivity() {
             val isLoading = it.refresh is LoadState.Loading
             binding.progressBarHeroes.isVisible = isLoading
         }
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun onItemClicked(hero: Hero) {
-        val intent = Intent(this, HeroDetailActivity::class.java)
-        intent.putExtra(Constants.EXTRA_HERO_ID, hero.id.toInt())
-        intent.putExtra(Constants.EXTRA_HERO_URL, hero.image.url)
-        startActivity(intent)
+        findNavController().navigate(
+            R.id.action_heroesFragment_to_heroDetailFragment,
+            bundleOf(
+                Constants.BUNDLE_HERO_ID to hero.id.toInt(),
+                Constants.BUNDLE_HERO_URL to hero.image.url
+            )
+        )
     }
 }

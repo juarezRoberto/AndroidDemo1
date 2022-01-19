@@ -13,11 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CoppelDemo">
         <activity
-            android:name=".ui.herodetailactivity.HeroDetailActivity"
+            android:name=".ui.herodetail.HeroDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.mainactivity.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

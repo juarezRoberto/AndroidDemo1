@@ -1,4 +1,4 @@
-package com.juarez.coppeldemo.ui.herodetailactivity
+package com.juarez.coppeldemo.ui.herodetail
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

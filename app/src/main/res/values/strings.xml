@@ -29,5 +29,7 @@
     <string name="placeholder_race">Race:</string>
     <string name="placeholder_gender">Gender:</string>
     <string name="title_appearance">Appearance</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

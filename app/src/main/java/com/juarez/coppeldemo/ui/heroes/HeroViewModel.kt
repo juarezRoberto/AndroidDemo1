@@ -1,4 +1,4 @@
-package com.juarez.coppeldemo.ui.mainactivity
+package com.juarez.coppeldemo.ui.heroes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
