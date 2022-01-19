@@ -1,28 +1,26 @@
 package com.juarez.coppeldemo.ui.herodetailactivity
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.juarez.coppeldemo.databinding.ActivityHeroDetailBinding
 import com.juarez.coppeldemo.extensions.convertToInt
 import com.juarez.coppeldemo.extensions.loadImage
-import com.juarez.coppeldemo.repositories.HeroRepository
 import com.juarez.coppeldemo.utils.Constants
-import com.juarez.coppeldemo.utils.HeroViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HeroDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHeroDetailBinding
-    private lateinit var viewModel: HeroDetailViewModel
+    private val viewModel: HeroDetailViewModel by viewModels()
     private var heroId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHeroDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val provider = HeroViewModelFactory(HeroRepository())
-        viewModel = ViewModelProvider(this, provider).get(HeroDetailViewModel::class.java)
 
         heroId = intent.getIntExtra(Constants.EXTRA_HERO_ID, 0)
         val heroUrl = intent.getStringExtra(Constants.EXTRA_HERO_URL)

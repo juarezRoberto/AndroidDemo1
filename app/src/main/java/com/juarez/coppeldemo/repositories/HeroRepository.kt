@@ -1,11 +1,12 @@
 package com.juarez.coppeldemo.repositories
 
-import com.juarez.coppeldemo.api.WebService
+import com.juarez.coppeldemo.api.HeroAPI
 import com.juarez.coppeldemo.models.*
 import com.juarez.coppeldemo.utils.Constants
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class HeroRepository {
+class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
 
     /**
      * this service emulate pagination because heroes.api does not have one
@@ -19,7 +20,7 @@ class HeroRepository {
             delay(1000)
             val heroes = arrayListOf<Hero>()
             for (i in firstHero..lastHero) {
-                val response = WebService.service().getHero(i)
+                val response = heroAPI.getHero(i)
                 if (response.isSuccessful) heroes.add(response.body()!!)
             }
             customResponse = CustomResponse(true, heroes, null)
@@ -61,7 +62,7 @@ class HeroRepository {
         var customResponse: CustomResponse<PowerStats>
         var powerStats = PowerStats("", null, null, null, null, null, null)
         try {
-            val power = WebService.service().getHeroPowerStats(heroId)
+            val power = heroAPI.getHeroPowerStats(heroId)
             if (power.isSuccessful) {
                 power.body()?.let {
                     powerStats = PowerStats(
@@ -85,7 +86,7 @@ class HeroRepository {
         var customResponse: CustomResponse<Biography>
         var biography = Biography(null, null, null, null, null, null, null, null)
         try {
-            val bio = WebService.service().getHeroBiography(heroId)
+            val bio = heroAPI.getHeroBiography(heroId)
             if (bio.isSuccessful) {
                 bio.body()?.let {
                     biography = Biography(
@@ -109,7 +110,7 @@ class HeroRepository {
         var customResponse: CustomResponse<Appearance>
         var appearance = Appearance(null, null, null, null, null, null)
         try {
-            val bio = WebService.service().getHeroAppearance(heroId)
+            val bio = heroAPI.getHeroAppearance(heroId)
             if (bio.isSuccessful) {
                 bio.body()?.let {
                     appearance = Appearance(
@@ -132,7 +133,7 @@ class HeroRepository {
         var customResponse: CustomResponse<Connections>
         var connections = Connections(null, null)
         try {
-            val bio = WebService.service().getHeroConnections(heroId)
+            val bio = heroAPI.getHeroConnections(heroId)
             if (bio.isSuccessful) {
                 bio.body()?.let {
                     connections = Connections(it.groupAffiliation, it.relatives)

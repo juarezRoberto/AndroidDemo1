@@ -7,8 +7,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.juarez.coppeldemo.repositories.HeroRepository
 import com.juarez.coppeldemo.repositories.HeroesSource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class HeroViewModel(private val repository: HeroRepository) : ViewModel() {
+@HiltViewModel
+class HeroViewModel @Inject constructor(private val repository: HeroRepository) : ViewModel() {
 
     val heroes = Pager(config = PagingConfig(pageSize = 5), pagingSourceFactory = {
         HeroesSource(repository)

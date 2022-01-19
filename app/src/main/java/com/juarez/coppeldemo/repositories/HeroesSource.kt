@@ -20,7 +20,7 @@ class HeroesSource(private val repository: HeroRepository) : PagingSource<Int, H
             val nextPageNumber = params.key ?: 1
             val response = repository.getAllHeroes(nextPageNumber)
             val heroes: ArrayList<Hero>
-            if(response.isSuccess) heroes = response.data!! as ArrayList<Hero>
+            if (response.isSuccess) heroes = response.data!! as ArrayList<Hero>
             else return LoadResult.Error(Throwable(response.message))
 
             LoadResult.Page(

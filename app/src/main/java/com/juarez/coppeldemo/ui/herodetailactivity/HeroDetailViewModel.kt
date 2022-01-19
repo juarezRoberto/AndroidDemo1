@@ -5,9 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juarez.coppeldemo.models.Hero
 import com.juarez.coppeldemo.repositories.HeroRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HeroDetailViewModel(private val repository: HeroRepository) : ViewModel() {
+@HiltViewModel
+class HeroDetailViewModel @Inject constructor(private val repository: HeroRepository) :
+    ViewModel() {
     val hero = MutableLiveData<Hero>()
     val loading = MutableLiveData<Boolean>()
     val error = MutableLiveData<String>()
