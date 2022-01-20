@@ -1,6 +1,6 @@
 package com.juarez.coppeldemo.api
 
-import com.juarez.coppeldemo.models.*
+import com.juarez.coppeldemo.data.models.*
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

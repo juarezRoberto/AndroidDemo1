@@ -13,10 +13,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.juarez.coppeldemo.R
-import com.juarez.coppeldemo.adapters.HeroLoadStateAdapter
-import com.juarez.coppeldemo.adapters.HeroesAdapter
+import com.juarez.coppeldemo.data.adapters.HeroLoadStateAdapter
+import com.juarez.coppeldemo.data.adapters.HeroesAdapter
+import com.juarez.coppeldemo.data.models.Hero
 import com.juarez.coppeldemo.databinding.FragmentHeroesBinding
-import com.juarez.coppeldemo.models.Hero
 import com.juarez.coppeldemo.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

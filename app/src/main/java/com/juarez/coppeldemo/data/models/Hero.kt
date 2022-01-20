@@ -1,4 +1,4 @@
-package com.juarez.coppeldemo.models
+package com.juarez.coppeldemo.data.models
 
 import com.google.gson.annotations.SerializedName
 

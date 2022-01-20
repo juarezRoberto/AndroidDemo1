@@ -1,4 +1,4 @@
-package com.juarez.coppeldemo.extensions
+package com.juarez.coppeldemo.utils
 
 import android.widget.ImageView
 import com.squareup.picasso.Picasso

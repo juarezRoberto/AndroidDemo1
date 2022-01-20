@@ -1,7 +1,7 @@
-package com.juarez.coppeldemo.repositories
+package com.juarez.coppeldemo.data.repositories
 
 import com.juarez.coppeldemo.api.HeroAPI
-import com.juarez.coppeldemo.models.*
+import com.juarez.coppeldemo.data.models.*
 import com.juarez.coppeldemo.utils.Constants
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -32,10 +32,8 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
         return customResponse
     }
 
-    suspend fun getHeroDetail(
-        heroId: Int,
-        callback: (isSuccess: Boolean, data: Hero?, message: String?) -> Unit
-    ) {
+    suspend fun getHeroDetail(heroId: Int): CustomResponse<Hero> {
+        var customResponse: CustomResponse<Hero>
         try {
             delay(1000)
             val powerStatsRes = getHeroPowerStats(heroId)
@@ -52,10 +50,11 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
                 appearanceRes.data!!,
                 connectionsRes.data!!
             )
-            callback.invoke(true, hero, null)
+            customResponse = CustomResponse(true, hero, null)
         } catch (e: Exception) {
-            callback.invoke(false, null, e.message.toString())
+            customResponse = CustomResponse(false, null, e.message.toString())
         }
+        return customResponse
     }
 
     suspend fun getHeroPowerStats(heroId: Int): CustomResponse<PowerStats> {

@@ -3,14 +3,14 @@ package com.juarez.coppeldemo.ui.herodetail
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.juarez.coppeldemo.models.Hero
-import com.juarez.coppeldemo.repositories.HeroRepository
+import com.juarez.coppeldemo.domain.GetHeroDetailUseCase
+import com.juarez.coppeldemo.data.models.Hero
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HeroDetailViewModel @Inject constructor(private val repository: HeroRepository) :
+class HeroDetailViewModel @Inject constructor(private val getHeroDetailUseCase: GetHeroDetailUseCase) :
     ViewModel() {
     val hero = MutableLiveData<Hero>()
     val loading = MutableLiveData<Boolean>()
@@ -18,10 +18,11 @@ class HeroDetailViewModel @Inject constructor(private val repository: HeroReposi
 
     fun getHeroDetail(heroId: Int) = viewModelScope.launch {
         loading.value = true
-        repository.getHeroDetail(heroId) { isSuccess, data, message ->
-            if (isSuccess) hero.value = data
-            else error.value = message
-        }
+
+        val response = getHeroDetailUseCase(heroId)
+        if (response.isSuccess) hero.value = response.data!!
+        else error.value = response.message!!
+
         loading.value = false
     }
 }

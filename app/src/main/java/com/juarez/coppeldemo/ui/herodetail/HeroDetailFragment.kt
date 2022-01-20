@@ -9,9 +9,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.juarez.coppeldemo.databinding.FragmentHeroDetailBinding
-import com.juarez.coppeldemo.extensions.convertToInt
-import com.juarez.coppeldemo.extensions.loadImage
 import com.juarez.coppeldemo.utils.Constants
+import com.juarez.coppeldemo.utils.convertToInt
+import com.juarez.coppeldemo.utils.loadImage
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,6 +35,7 @@ class HeroDetailFragment : Fragment() {
         }
 
         viewModel.getHeroDetail(heroId)
+        viewModel.hero
         viewModel.hero.observe(viewLifecycleOwner, {
             with(binding) {
                 with(it.powerStats) {

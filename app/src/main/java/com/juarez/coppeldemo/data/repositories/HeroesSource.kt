@@ -1,12 +1,13 @@
-package com.juarez.coppeldemo.repositories
+package com.juarez.coppeldemo.data.repositories
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.juarez.coppeldemo.models.Hero
+import com.juarez.coppeldemo.domain.GetHeroesUseCase
+import com.juarez.coppeldemo.data.models.Hero
 import retrofit2.HttpException
 import java.io.IOException
 
-class HeroesSource(private val repository: HeroRepository) : PagingSource<Int, Hero>() {
+class HeroesSource(private val getHeroesUseCase: GetHeroesUseCase) : PagingSource<Int, Hero>() {
     override fun getRefreshKey(state: PagingState<Int, Hero>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
@@ -18,7 +19,7 @@ class HeroesSource(private val repository: HeroRepository) : PagingSource<Int, H
 
         return try {
             val nextPageNumber = params.key ?: 1
-            val response = repository.getAllHeroes(nextPageNumber)
+            val response = getHeroesUseCase(nextPageNumber)
             val heroes: ArrayList<Hero>
             if (response.isSuccess) heroes = response.data!! as ArrayList<Hero>
             else return LoadResult.Error(Throwable(response.message))

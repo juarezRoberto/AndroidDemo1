@@ -1,4 +1,4 @@
-package com.juarez.coppeldemo.adapters
+package com.juarez.coppeldemo.data.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.juarez.coppeldemo.R
 import com.juarez.coppeldemo.databinding.ItemHeroBinding
-import com.juarez.coppeldemo.models.Hero
+import com.juarez.coppeldemo.data.models.Hero
 import com.squareup.picasso.Picasso
 
 class HeroesAdapter(private val onItemClicked: (Hero) -> Unit) :

@@ -1,4 +1,4 @@
-package com.juarez.coppeldemo.adapters
+package com.juarez.coppeldemo.data.adapters
 
 import android.util.Log
 import android.view.LayoutInflater
