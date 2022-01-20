@@ -1,6 +1,5 @@
 package com.juarez.coppeldemo.api
 
-import android.util.Log
 import com.juarez.coppeldemo.utils.Constants
 import okhttp3.Interceptor
 import okhttp3.Response

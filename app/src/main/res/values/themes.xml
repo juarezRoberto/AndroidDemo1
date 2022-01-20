@@ -13,4 +13,8 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="Theme.CoppelDemo.Toolbar">
+        <!-- Color used for the title of the Toolbar - as long as not overridden -->
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
 </resources>

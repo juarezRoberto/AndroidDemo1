@@ -1,15 +1,16 @@
 package com.juarez.coppeldemo.di
 
+import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.juarez.coppeldemo.BuildConfig
 import com.juarez.coppeldemo.api.HeroAPI
-import com.juarez.coppeldemo.api.HttpInterceptor
 import com.juarez.coppeldemo.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -20,18 +21,39 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    @Provides
+    @Singleton
+    fun providesHttpInterceptor(@ApplicationContext context: Context): Interceptor {
+        return Interceptor {
+            val originalRequest = it.request()
+            val originalUrl = originalRequest.url
+
+            val requestBuilder = originalRequest
+                .newBuilder()
+                .addHeader("Authorization", "Token")
+                .url(originalUrl.toString().replace("access-token", Constants.ACCESS_TOKEN))
+                .build()
+            it.proceed(requestBuilder)
+        }
+    }
 
     @Singleton
     @Provides
-    fun provideHttpClient(): OkHttpClient =
-        OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().apply {
-            level =
-                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
-        })
+    fun providesHttpLoggingInterceptor() = HttpLoggingInterceptor()
+        .apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
+    @Singleton
+    @Provides
+    fun provideHttpClient(
+        httpInterceptor: Interceptor,
+        httpLoggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .addInterceptor(HttpInterceptor())
+            .addInterceptor(httpInterceptor)
             .build()
 
     @Singleton

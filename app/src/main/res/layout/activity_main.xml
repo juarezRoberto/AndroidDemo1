@@ -14,10 +14,11 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            android:theme="@style/Theme.CoppelDemo.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
     </com.google.android.material.appbar.AppBarLayout>
 
 
