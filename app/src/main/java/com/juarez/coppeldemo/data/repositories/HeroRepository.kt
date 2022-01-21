@@ -59,7 +59,7 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
 
     suspend fun getHeroPowerStats(heroId: Int): CustomResponse<PowerStats> {
         var customResponse: CustomResponse<PowerStats>
-        var powerStats = PowerStats(null, null, null, null, null, null, null)
+        var powerStats = PowerStats()
         try {
             val power = heroAPI.getHeroPowerStats(heroId)
             if (!power.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
@@ -78,7 +78,7 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
 
     suspend fun getHeroBiography(heroId: Int): CustomResponse<Biography> {
         var customResponse: CustomResponse<Biography>
-        var biography = Biography(null, null, null, null, null, null, null, null)
+        var biography = Biography()
         try {
             val bio = heroAPI.getHeroBiography(heroId)
             if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
@@ -98,7 +98,7 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
 
     suspend fun getHeroAppearance(heroId: Int): CustomResponse<Appearance> {
         var customResponse: CustomResponse<Appearance>
-        var appearance = Appearance(null, null, null, null, null, null)
+        var appearance = Appearance()
         try {
             val bio = heroAPI.getHeroAppearance(heroId)
             if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
@@ -117,7 +117,7 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
 
     suspend fun getHeroConnections(heroId: Int): CustomResponse<Connections> {
         var customResponse: CustomResponse<Connections>
-        var connections = Connections(null, null)
+        var connections = Connections()
         try {
             val bio = heroAPI.getHeroConnections(heroId)
             if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)

@@ -7,18 +7,18 @@ import retrofit2.http.Path
 
 interface HeroAPI {
 
-    @GET("/api/access-token/{hero_id}")
+    @GET("{hero_id}")
     suspend fun getHero(@Path("hero_id") heroId: Int): Response<Hero>
 
-    @GET("/api/access-token/{hero_id}/powerstats")
+    @GET("{hero_id}/powerstats")
     suspend fun getHeroPowerStats(@Path("hero_id") heroId: Int): Response<PowerStats>
 
-    @GET("/api/access-token/{hero_id}/biography")
+    @GET("{hero_id}/biography")
     suspend fun getHeroBiography(@Path("hero_id") heroId: Int): Response<Biography>
 
-    @GET("/api/access-token/{hero_id}/appearance")
+    @GET("{hero_id}/appearance")
     suspend fun getHeroAppearance(@Path("hero_id") heroId: Int): Response<Appearance>
 
-    @GET("/api/access-token/{hero_id}/connections")
+    @GET("{hero_id}/connections")
     suspend fun getHeroConnections(@Path("hero_id") heroId: Int): Response<Connections>
 }
