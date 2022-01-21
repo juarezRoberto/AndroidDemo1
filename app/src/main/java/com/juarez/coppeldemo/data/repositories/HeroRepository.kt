@@ -26,10 +26,10 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
 
                 requestsResponse.forEach { if (it.isSuccessful) heroes.add(it.body()!!) }
             }
-            customResponse = CustomResponse(true, heroes, null)
+            customResponse = CustomResponse(isSuccess = true, data = heroes)
 
         } catch (e: Exception) {
-            customResponse = CustomResponse(false, null, e.message.toString())
+            customResponse = CustomResponse(message = e.message.toString())
         }
         return customResponse
     }

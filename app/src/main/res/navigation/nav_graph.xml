@@ -9,7 +9,7 @@
         android:id="@+id/heroesFragment"
         android:name="com.juarez.coppeldemo.ui.heroes.HeroesFragment"
         android:label="heroes"
-        tools:layout="@layout/fragment_heroes" >
+        tools:layout="@layout/fragment_heroes">
         <action
             android:id="@+id/action_heroesFragment_to_heroDetailFragment"
             app:destination="@id/heroDetailFragment" />
@@ -19,5 +19,9 @@
         android:id="@+id/heroDetailFragment"
         android:name="com.juarez.coppeldemo.ui.herodetail.HeroDetailFragment"
         android:label="hero detail"
-        tools:layout="@layout/fragment_hero_detail" />
+        tools:layout="@layout/fragment_hero_detail">
+        <argument
+            android:name="hero_id"
+            app:argType="integer" />
+    </fragment>
 </navigation>

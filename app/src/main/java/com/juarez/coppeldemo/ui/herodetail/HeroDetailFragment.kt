@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.juarez.coppeldemo.databinding.FragmentHeroDetailBinding
 import com.juarez.coppeldemo.utils.Constants
 import com.juarez.coppeldemo.utils.convertToInt
@@ -21,18 +22,14 @@ class HeroDetailFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: HeroDetailViewModel by viewModels()
     private var heroId = 0
+    private val args: HeroDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHeroDetailBinding.inflate(inflater, container, false)
-        arguments?.getInt(Constants.BUNDLE_HERO_ID)?.let {
-            heroId = it
-        }
-//        arguments?.getString(Constants.BUNDLE_HERO_URL)?.let {
-//            binding.imgDetailPhoto.loadImage(it)
-//        }
+        heroId = args.heroId
 
         viewModel.getHeroDetail(heroId)
         viewModel.hero.observe(viewLifecycleOwner, {

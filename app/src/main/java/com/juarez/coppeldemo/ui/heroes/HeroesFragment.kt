@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,12 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import com.juarez.coppeldemo.R
 import com.juarez.coppeldemo.data.adapters.HeroLoadStateAdapter
 import com.juarez.coppeldemo.data.adapters.HeroesAdapter
 import com.juarez.coppeldemo.data.models.Hero
 import com.juarez.coppeldemo.databinding.FragmentHeroesBinding
-import com.juarez.coppeldemo.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -32,7 +29,7 @@ class HeroesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentHeroesBinding.inflate(inflater, container, false)
 
         binding.recyclerHeroes.apply {
@@ -58,12 +55,17 @@ class HeroesFragment : Fragment() {
     }
 
     private fun onItemClicked(hero: Hero) {
-        findNavController().navigate(
-            R.id.action_heroesFragment_to_heroDetailFragment,
-            bundleOf(
-                Constants.BUNDLE_HERO_ID to hero.id.toInt(),
-                Constants.BUNDLE_HERO_URL to hero.image.url
-            )
+        val action = HeroesFragmentDirections.actionHeroesFragmentToHeroDetailFragment(
+            hero.id.toInt(),
         )
+        findNavController().navigate(action)
+//    navigate with action id
+//        findNavController().navigate(
+//            R.id.action_heroesFragment_to_heroDetailFragment,
+//            bundleOf(
+//                Constants.BUNDLE_HERO_ID to hero.id.toInt(),
+//                Constants.BUNDLE_HERO_URL to hero.image.url
+//            )
+//        )
     }
 }
