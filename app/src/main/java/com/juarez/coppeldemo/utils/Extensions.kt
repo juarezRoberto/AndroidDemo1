@@ -1,6 +1,7 @@
 package com.juarez.coppeldemo.utils
 
 import android.widget.ImageView
+import com.juarez.coppeldemo.R
 import com.squareup.picasso.Picasso
 
 /**
@@ -15,7 +16,7 @@ fun String.convertToInt(): Int {
 }
 
 fun ImageView.loadImage(url: String?) {
-    Picasso.get().load(url).into(this)
+    Picasso.get().load(url).error(R.drawable.hero_placeholder).into(this)
 }
 
 

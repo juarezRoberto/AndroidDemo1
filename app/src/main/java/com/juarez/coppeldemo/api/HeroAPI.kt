@@ -21,4 +21,7 @@ interface HeroAPI {
 
     @GET("{hero_id}/connections")
     suspend fun getHeroConnections(@Path("hero_id") heroId: Int): Response<Connections>
+
+    @GET("{hero_id}/image")
+    suspend fun getHeroImage(@Path("hero_id") heroId: Int): Response<Image>
 }

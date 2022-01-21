@@ -3,7 +3,9 @@ package com.juarez.coppeldemo.data.repositories
 import com.juarez.coppeldemo.api.HeroAPI
 import com.juarez.coppeldemo.data.models.*
 import com.juarez.coppeldemo.utils.Constants
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
@@ -17,48 +19,68 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
         val lastHero = ((page - 1) * 20) + 20
         if (page == 1) firstHero = 1
         try {
-            delay(1000)
             val heroes = arrayListOf<Hero>()
-            for (i in firstHero..lastHero) {
-                val response = heroAPI.getHero(i)
-                if (response.isSuccessful) heroes.add(response.body()!!)
+            coroutineScope {
+                val requestsDeferred = (firstHero..lastHero).map { async { heroAPI.getHero(it) } }
+                val requestsResponse = requestsDeferred.awaitAll()
+
+                requestsResponse.forEach { if (it.isSuccessful) heroes.add(it.body()!!) }
             }
             customResponse = CustomResponse(true, heroes, null)
 
         } catch (e: Exception) {
             customResponse = CustomResponse(false, null, e.message.toString())
         }
-
         return customResponse
     }
 
     suspend fun getHeroDetail(heroId: Int): CustomResponse<Hero> {
         var customResponse: CustomResponse<Hero>
         try {
-            delay(1000)
-            val powerStatsRes = getHeroPowerStats(heroId)
-            val bioRes = getHeroBiography((heroId))
-            val appearanceRes = getHeroAppearance(heroId)
-            val connectionsRes = getHeroConnections(heroId)
+            coroutineScope {
+                val statsDeferred = async { getHeroPowerStats(heroId) }
+                val bioDeferred = async { getHeroBiography(heroId) }
+                val appearanceDeferred = async { getHeroAppearance(heroId) }
+                val connectionsDeferred = async { getHeroConnections(heroId) }
+                val imageDeferred = async { getHeroImage(heroId) }
+                val statsRes = statsDeferred.await()
+                val bioRes = bioDeferred.await()
+                val appearanceRes = appearanceDeferred.await()
+                val connectionsRes = connectionsDeferred.await()
+                val imageRes = imageDeferred.await()
 
-            val hero = Hero(
-                heroId.toString(),
-                powerStatsRes.data?.name!!,
-                Image(""),
-                powerStatsRes.data,
-                bioRes.data!!,
-                appearanceRes.data!!,
-                connectionsRes.data!!
-            )
-            customResponse = CustomResponse(true, hero, null)
+                val hero = Hero(
+                    heroId.toString(),
+                    statsRes.data?.name!!,
+                    imageRes.data!!,
+                    statsRes.data,
+                    bioRes.data!!,
+                    appearanceRes.data!!,
+                    connectionsRes.data!!
+                )
+                customResponse = CustomResponse(isSuccess = true, data = hero)
+            }
         } catch (e: Exception) {
-            customResponse = CustomResponse(false, null, e.message.toString())
+            customResponse = CustomResponse(message = e.message.toString())
         }
         return customResponse
     }
 
+    suspend fun getHeroImage(heroId: Int): CustomResponse<Image> {
+        var image = Image()
+        try {
+            val imageRes = heroAPI.getHeroImage(heroId)
+            if (!imageRes.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
+            imageRes.body()?.let {
+                image = Image(it.url)
+            }
+            return CustomResponse(isSuccess = true, data = image)
+        } catch (e: Exception) {
+            return CustomResponse(data = image, message = e.message.toString())
+        }
+    }
+
     suspend fun getHeroPowerStats(heroId: Int): CustomResponse<PowerStats> {
-        var customResponse: CustomResponse<PowerStats>
         var powerStats = PowerStats()
         try {
             val power = heroAPI.getHeroPowerStats(heroId)
@@ -69,15 +91,13 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
                     it.power, it.combat
                 )
             }
-            customResponse = CustomResponse(true, powerStats, null)
+            return CustomResponse(isSuccess = true, data = powerStats)
         } catch (e: Exception) {
-            customResponse = CustomResponse(false, powerStats, e.message.toString())
+            return CustomResponse(data = powerStats, message = e.message.toString())
         }
-        return customResponse
     }
 
     suspend fun getHeroBiography(heroId: Int): CustomResponse<Biography> {
-        var customResponse: CustomResponse<Biography>
         var biography = Biography()
         try {
             val bio = heroAPI.getHeroBiography(heroId)
@@ -88,16 +108,14 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
                     it.firstAppearance, it.publisher, it.alignment
                 )
             }
-            customResponse = CustomResponse(true, biography, null)
+            return CustomResponse(isSuccess = true, data = biography)
 
         } catch (e: Exception) {
-            customResponse = CustomResponse(false, biography, e.message.toString())
+            return CustomResponse(data = biography, message = e.message.toString())
         }
-        return customResponse
     }
 
     suspend fun getHeroAppearance(heroId: Int): CustomResponse<Appearance> {
-        var customResponse: CustomResponse<Appearance>
         var appearance = Appearance()
         try {
             val bio = heroAPI.getHeroAppearance(heroId)
@@ -107,16 +125,14 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
                     it.gender, it.race, it.height, it.weight, it.eyeColor, it.hairColor
                 )
             }
-            customResponse = CustomResponse(true, appearance, null)
+            return CustomResponse(isSuccess = true, data = appearance)
 
         } catch (e: Exception) {
-            customResponse = CustomResponse(false, appearance, e.message.toString())
+            return CustomResponse(data = appearance, message = e.message.toString())
         }
-        return customResponse
     }
 
     suspend fun getHeroConnections(heroId: Int): CustomResponse<Connections> {
-        var customResponse: CustomResponse<Connections>
         var connections = Connections()
         try {
             val bio = heroAPI.getHeroConnections(heroId)
@@ -124,11 +140,10 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
             bio.body()?.let {
                 connections = Connections(it.groupAffiliation, it.relatives)
             }
-            customResponse = CustomResponse(true, connections, null)
+            return CustomResponse(isSuccess = true, data = connections)
 
         } catch (e: Exception) {
-            customResponse = CustomResponse(false, connections, e.message.toString())
+            return CustomResponse(data = connections, message = e.message.toString())
         }
-        return customResponse
     }
 }

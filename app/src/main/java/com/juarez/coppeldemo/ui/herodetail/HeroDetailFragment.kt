@@ -30,12 +30,11 @@ class HeroDetailFragment : Fragment() {
         arguments?.getInt(Constants.BUNDLE_HERO_ID)?.let {
             heroId = it
         }
-        arguments?.getString(Constants.BUNDLE_HERO_URL)?.let {
-            binding.imgDetailPhoto.loadImage(it)
-        }
+//        arguments?.getString(Constants.BUNDLE_HERO_URL)?.let {
+//            binding.imgDetailPhoto.loadImage(it)
+//        }
 
         viewModel.getHeroDetail(heroId)
-        viewModel.hero
         viewModel.hero.observe(viewLifecycleOwner, {
             with(binding) {
                 with(it.powerStats) {
@@ -66,6 +65,9 @@ class HeroDetailFragment : Fragment() {
                 with(it.connections) {
                     txtAffiliations.text = groupAffiliation ?: Constants.NO_AVAILABLE
                     txtRelatives.text = relatives ?: Constants.NO_AVAILABLE
+                }
+                with(it.image) {
+                    imgDetailPhoto.loadImage(url)
                 }
             }
         })

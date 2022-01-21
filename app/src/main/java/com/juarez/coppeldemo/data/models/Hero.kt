@@ -12,7 +12,7 @@ data class Hero(
     val connections: Connections
 )
 
-data class Image(val url: String)
+data class Image(val url: String? = "")
 
 data class PowerStats(
     val name: String? = "",
