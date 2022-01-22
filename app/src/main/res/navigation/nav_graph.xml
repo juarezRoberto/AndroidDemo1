@@ -11,17 +11,48 @@
         android:label="heroes"
         tools:layout="@layout/fragment_heroes">
         <action
-            android:id="@+id/action_heroesFragment_to_heroDetailFragment"
-            app:destination="@id/heroDetailFragment" />
+            android:id="@+id/action_heroesFragment_to_biographyFragment"
+            app:destination="@id/biographyFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
 
     <fragment
-        android:id="@+id/heroDetailFragment"
-        android:name="com.juarez.coppeldemo.ui.herodetail.HeroDetailFragment"
+        android:id="@+id/connectionsFragment"
+        android:name="com.juarez.coppeldemo.ui.herodetail.ConnectionsFragment"
         android:label="hero detail"
-        tools:layout="@layout/fragment_hero_detail">
+        tools:layout="@layout/fragment_connections" />
+    <fragment
+        android:id="@+id/biographyFragment"
+        android:name="com.juarez.coppeldemo.ui.herodetail.BiographyFragment"
+        android:label="{screen_name}"
+        tools:layout="@layout/fragment_biography">
         <argument
             android:name="hero_id"
             app:argType="integer" />
+        <argument
+            android:name="screen_name"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_biographyFragment_to_powerFragment"
+            app:destination="@id/powerFragment" />
+        <action
+            android:id="@+id/action_biographyFragment_to_appearanceFragment"
+            app:destination="@id/appearanceFragment" />
+        <action
+            android:id="@+id/action_biographyFragment_to_connectionsFragment"
+            app:destination="@id/connectionsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/powerFragment"
+        android:name="com.juarez.coppeldemo.ui.herodetail.PowerFragment"
+        android:label="power"
+        tools:layout="@layout/fragment_power" />
+    <fragment
+        android:id="@+id/appearanceFragment"
+        android:name="com.juarez.coppeldemo.ui.herodetail.AppearanceFragment"
+        android:label="appearance"
+        tools:layout="@layout/fragment_appearance" />
 </navigation>

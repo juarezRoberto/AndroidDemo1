@@ -55,8 +55,9 @@ class HeroesFragment : Fragment() {
     }
 
     private fun onItemClicked(hero: Hero) {
-        val action = HeroesFragmentDirections.actionHeroesFragmentToHeroDetailFragment(
+        val action = HeroesFragmentDirections.actionHeroesFragmentToBiographyFragment(
             hero.id.toInt(),
+            hero.name
         )
         findNavController().navigate(action)
 //    navigate with action id
