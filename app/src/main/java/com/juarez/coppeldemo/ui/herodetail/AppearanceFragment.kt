@@ -31,11 +31,9 @@ class AppearanceFragment : Fragment() {
                     txtEyeColor.text = eyeColor ?: Constants.NO_AVAILABLE
                     txtHairColor.text = hairColor ?: Constants.NO_AVAILABLE
                 }
-                with(it.image) {
-                    imgAppearancePhoto.loadImage(url)
-                }
             }
         })
+        viewModel.url.observe(viewLifecycleOwner, { binding.imgAppearancePhoto.loadImage(it) })
         return binding.root
     }
 

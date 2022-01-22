@@ -30,11 +30,10 @@ class ConnectionsFragment : Fragment() {
                     txtAffiliations.text = groupAffiliation ?: Constants.NO_AVAILABLE
                     txtRelatives.text = relatives ?: Constants.NO_AVAILABLE
                 }
-                with(it.image) {
-                    imgConnPhoto.loadImage(url)
-                }
             }
         })
+
+        viewModel.url.observe(viewLifecycleOwner, { binding.imgConnPhoto.loadImage(it) })
         return binding.root
     }
 

@@ -33,11 +33,9 @@ class PowerFragment : Fragment() {
                     progressPower.progress = power?.convertToInt() ?: 0
                     progressCombat.progress = combat?.convertToInt() ?: 0
                 }
-                with(it.image) {
-                    imgPowerPhoto.loadImage(url)
-                }
             }
         })
+        viewModel.url.observe(viewLifecycleOwner, { binding.imgPowerPhoto.loadImage(it) })
         return binding.root
     }
 
