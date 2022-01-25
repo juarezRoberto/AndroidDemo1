@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import com.juarez.coppeldemo.data.models.Hero
+import com.juarez.coppeldemo.data.models.Image
 import com.juarez.coppeldemo.databinding.FragmentBiographyBinding
 import com.juarez.coppeldemo.ui.sharedviewmodels.HeroDetailViewModel
 import com.juarez.coppeldemo.utils.Constants
@@ -23,6 +25,9 @@ class BiographyFragment : Fragment() {
     private var _binding: FragmentBiographyBinding? = null
     private val binding get() = _binding!!
     private var heroId = 0
+    private var heroName = ""
+    private var heroUrl = ""
+    private var isFavorite = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,11 +48,16 @@ class BiographyFragment : Fragment() {
             val action = BiographyFragmentDirections.actionBiographyFragmentToConnectionsFragment()
             it.findNavController().navigate(action)
         }
-
+        binding.fabAddFavorites.setOnClickListener {
+            viewModel.saveFavoriteHero(
+                Hero(id = "$heroId", name = heroName, image = Image(heroUrl))
+            )
+        }
         viewModel.getHeroDetail(heroId)
         viewModel.hero.observe(viewLifecycleOwner, {
             with(binding) {
                 with(it.biography) {
+                    heroName = name ?: Constants.NO_AVAILABLE
                     txtBioName.text = name ?: Constants.NO_AVAILABLE
                     txtFullName.text =
                         if (fullName.isNullOrEmpty()) Constants.NO_AVAILABLE else fullName
@@ -57,6 +67,7 @@ class BiographyFragment : Fragment() {
                     txtAlignment.text = alignment ?: Constants.NO_AVAILABLE
                 }
                 with(it.image) {
+                    heroUrl = url ?: Constants.NO_AVAILABLE
                     imgDetailPhoto.loadImage(url)
                 }
             }
@@ -76,6 +87,9 @@ class BiographyFragment : Fragment() {
                 dialog.dismiss()
             }
             builder.show()
+        })
+        viewModel.isFavorite.observe(viewLifecycleOwner, {
+            binding.fabAddFavorites.isVisible = it
         })
         return binding.root
     }

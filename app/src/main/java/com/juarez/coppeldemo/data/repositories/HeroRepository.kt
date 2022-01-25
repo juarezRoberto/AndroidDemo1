@@ -1,14 +1,19 @@
 package com.juarez.coppeldemo.data.repositories
 
 import com.juarez.coppeldemo.api.HeroAPI
+import com.juarez.coppeldemo.data.db.HeroDao
 import com.juarez.coppeldemo.data.models.*
 import com.juarez.coppeldemo.utils.Constants
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
+class HeroRepository @Inject constructor(
+    private val heroAPI: HeroAPI,
+    private val heroDao: HeroDao
+) {
 
     /**
      * this service emulate pagination because heroes.api does not have one
@@ -145,5 +150,23 @@ class HeroRepository @Inject constructor(private val heroAPI: HeroAPI) {
         } catch (e: Exception) {
             return CustomResponse(data = connections, message = e.message.toString())
         }
+    }
+
+    suspend fun saveFavoriteHero(hero: HeroEntity) {
+        val fav = getFavoriteById(hero.id)
+        if (fav == null) heroDao.insert(hero)
+    }
+
+    suspend fun getFavoriteById(heroId: Int) = heroDao.getFavoriteHeroById(heroId)
+
+    suspend fun isFavoriteHero(heroId: Int): Boolean {
+        val hero = getFavoriteById(heroId)
+        return hero == null
+    }
+
+    suspend fun removeFavoriteHero(heroId: Int) = heroDao.removeFavoriteHero(heroId)
+
+    val favoriteHeroes = heroDao.getAllHeroes().map { heroEntities ->
+        heroEntities.map { heroEntity -> heroEntity.toModel() }
     }
 }

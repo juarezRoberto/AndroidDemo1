@@ -17,6 +17,13 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_heroesFragment_to_favoriteHeroesFragment"
+            app:destination="@id/favoriteHeroesFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
 
     <fragment
@@ -55,4 +62,13 @@
         android:name="com.juarez.coppeldemo.ui.herodetail.AppearanceFragment"
         android:label="appearance"
         tools:layout="@layout/fragment_appearance" />
+    <fragment
+        android:id="@+id/favoriteHeroesFragment"
+        android:name="com.juarez.coppeldemo.ui.favorites.FavoriteHeroesFragment"
+        android:label="favorites"
+        tools:layout="@layout/fragment_favorite_heroes" >
+        <action
+            android:id="@+id/action_favoriteHeroesFragment_to_biographyFragment"
+            app:destination="@id/biographyFragment" />
+    </fragment>
 </navigation>

@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
@@ -32,8 +33,12 @@ class HeroesFragment : Fragment() {
     ): View {
         _binding = FragmentHeroesBinding.inflate(inflater, container, false)
 
+        binding.fabShowFavorites.setOnClickListener {
+            val action = HeroesFragmentDirections.actionHeroesFragmentToFavoriteHeroesFragment()
+            it.findNavController().navigate(action)
+        }
         binding.recyclerHeroes.apply {
-            layoutManager = GridLayoutManager(context, 2)
+            layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = heroesAdapter.withLoadStateFooter(
                 footer = HeroLoadStateAdapter(heroesAdapter::retry)
             )

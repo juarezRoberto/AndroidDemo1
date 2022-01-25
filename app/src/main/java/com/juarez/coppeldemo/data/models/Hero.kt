@@ -1,16 +1,35 @@
 package com.juarez.coppeldemo.data.models
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class Hero(
-    val id: String,
-    val name: String,
-    val image: Image,
-    val powerStats: PowerStats,
-    val biography: Biography,
-    val appearance: Appearance,
-    val connections: Connections
+    val id: String = "",
+    val name: String = "",
+    val image: Image = Image(),
+    val powerStats: PowerStats = PowerStats(),
+    val biography: Biography = Biography(),
+    val appearance: Appearance = Appearance(),
+    val connections: Connections = Connections()
 )
+
+@Entity(tableName = "heroes_table")
+data class HeroEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val heroId: Int,
+    val name: String,
+    val image: String,
+)
+
+fun Hero.toEntity(): HeroEntity {
+    return HeroEntity(heroId = id.toInt(), name = name, image = image.url!!)
+}
+
+fun HeroEntity.toModel(): Hero {
+    return Hero(id = heroId.toString(), name = name, image = Image(image))
+}
 
 data class Image(val url: String? = "")
 
