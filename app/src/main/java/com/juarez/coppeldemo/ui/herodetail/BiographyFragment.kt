@@ -27,15 +27,36 @@ class BiographyFragment : Fragment() {
     private var heroId = 0
     private var heroName = ""
     private var heroUrl = ""
-    private var isFavorite = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentBiographyBinding.inflate(inflater, container, false)
         heroId = args.heroId
+        onClickActions()
 
+        viewModel.getHeroDetail(heroId)
+        viewModel.hero.observe(viewLifecycleOwner, {
+            binding.progressBarHeroDetail.isVisible = false
+            updateHeroData(it)
+        })
+        viewModel.loading.observe(viewLifecycleOwner, {
+            binding.progressBarHeroDetail.isVisible = true
+        })
+        viewModel.error.observe(viewLifecycleOwner, { message ->
+            if (!message.isNullOrEmpty()) {
+                binding.progressBarHeroDetail.isVisible = false
+                errorAlert(message)
+            }
+        })
+        viewModel.isFavorite.observe(viewLifecycleOwner, {
+            binding.fabAddFavorites.isVisible = it
+        })
+        return binding.root
+    }
+
+    private fun onClickActions() {
         binding.btnShowPower.setOnClickListener {
             val action = BiographyFragmentDirections.actionBiographyFragmentToPowerFragment()
             it.findNavController().navigate(action)
@@ -50,48 +71,41 @@ class BiographyFragment : Fragment() {
         }
         binding.fabAddFavorites.setOnClickListener {
             viewModel.saveFavoriteHero(
-                Hero(id = "$heroId", name = heroName, image = Image(heroUrl))
-            )
+                Hero(id = "$heroId", name = heroName, image = Image(heroUrl)))
         }
-        viewModel.getHeroDetail(heroId)
-        viewModel.hero.observe(viewLifecycleOwner, {
-            with(binding) {
-                with(it.biography) {
-                    heroName = name ?: Constants.NO_AVAILABLE
-                    txtBioName.text = name ?: Constants.NO_AVAILABLE
-                    txtFullName.text =
-                        if (fullName.isNullOrEmpty()) Constants.NO_AVAILABLE else fullName
-                    txtPlaceBirth.text = placeOfBirth ?: Constants.NO_AVAILABLE
-                    txtAppearance.text = firstAppearance ?: Constants.NO_AVAILABLE
-                    txtPublisher.text = publisher ?: Constants.NO_AVAILABLE
-                    txtAlignment.text = alignment ?: Constants.NO_AVAILABLE
-                }
-                with(it.image) {
-                    heroUrl = url ?: Constants.NO_AVAILABLE
-                    imgDetailPhoto.loadImage(url)
-                }
+    }
+
+    private fun updateHeroData(hero: Hero) {
+        with(binding) {
+            with(hero.biography) {
+                heroName = name ?: Constants.NO_AVAILABLE
+                txtBioName.text = name ?: Constants.NO_AVAILABLE
+                txtFullName.text =
+                    if (fullName.isNullOrEmpty()) Constants.NO_AVAILABLE else fullName
+                txtPlaceBirth.text = placeOfBirth ?: Constants.NO_AVAILABLE
+                txtAppearance.text = firstAppearance ?: Constants.NO_AVAILABLE
+                txtPublisher.text = publisher ?: Constants.NO_AVAILABLE
+                txtAlignment.text = alignment ?: Constants.NO_AVAILABLE
             }
-        })
-        viewModel.loading.observe(viewLifecycleOwner, {
-            binding.progressBarHeroDetail.isVisible = it
-        })
-        viewModel.error.observe(viewLifecycleOwner, {
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setTitle(Constants.ALERT_TITLE)
-            builder.setMessage(it)
-            builder.setPositiveButton(Constants.ALERT_RETRY) { dialog, _ ->
-                viewModel.getHeroDetail(heroId)
-                dialog.dismiss()
+            with(hero.image) {
+                heroUrl = url ?: Constants.NO_AVAILABLE
+                imgDetailPhoto.loadImage(url)
             }
-            builder.setNegativeButton(Constants.ALERT_CANCEL) { dialog, _ ->
-                dialog.dismiss()
-            }
-            builder.show()
-        })
-        viewModel.isFavorite.observe(viewLifecycleOwner, {
-            binding.fabAddFavorites.isVisible = it
-        })
-        return binding.root
+        }
+    }
+
+    private fun errorAlert(message: String) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(Constants.ALERT_TITLE)
+        builder.setMessage(message)
+        builder.setPositiveButton(Constants.ALERT_RETRY) { dialog, _ ->
+            viewModel.getHeroDetail(heroId)
+            dialog.dismiss()
+        }
+        builder.setNegativeButton(Constants.ALERT_CANCEL) { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     override fun onDestroyView() {

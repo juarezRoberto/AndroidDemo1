@@ -1,13 +1,16 @@
-package com.juarez.coppeldemo.data.repositories
+package com.juarez.coppeldemo.data.remoteDataSources
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.juarez.coppeldemo.domain.GetHeroesUseCase
 import com.juarez.coppeldemo.data.models.Hero
+import com.juarez.coppeldemo.data.repositories.HeroRepository
+import com.juarez.coppeldemo.utils.Constants
+import com.juarez.coppeldemo.utils.NetworkResponse
 import retrofit2.HttpException
 import java.io.IOException
 
-class HeroesSource(private val getHeroesUseCase: GetHeroesUseCase) : PagingSource<Int, Hero>() {
+class HeroesPagingSource(private val getUserService: GetUserService) :
+    PagingSource<Int, Hero>() {
     override fun getRefreshKey(state: PagingState<Int, Hero>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
@@ -19,20 +22,21 @@ class HeroesSource(private val getHeroesUseCase: GetHeroesUseCase) : PagingSourc
 
         return try {
             val nextPageNumber = params.key ?: 1
-            val response = getHeroesUseCase(nextPageNumber)
-            val heroes: ArrayList<Hero>
-            if (response.isSuccess) heroes = response.data!! as ArrayList<Hero>
-            else return LoadResult.Error(Throwable(response.message))
+            val heroes = arrayListOf<Hero>()
+            val response = getUserService(nextPageNumber)
+            if (response is NetworkResponse.Success<*>) {
+                response.data?.let { heroes.addAll(it) }
+            }
 
             LoadResult.Page(
                 data = heroes,
                 prevKey = null, // only fordward
                 nextKey = nextPageNumber + 1
             )
-        } catch (exception: IOException) {
-            return LoadResult.Error(exception)
         } catch (exception: HttpException) {
-            return LoadResult.Error(exception)
+            LoadResult.Error(exception)
+        } catch (exception: IOException) {
+            LoadResult.Error(Exception(Constants.CONNECTION_ERROR))
         }
     }
 

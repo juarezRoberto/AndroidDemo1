@@ -1,48 +1,42 @@
 package com.juarez.coppeldemo.data.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.juarez.coppeldemo.api.HeroAPI
 import com.juarez.coppeldemo.data.db.HeroDao
 import com.juarez.coppeldemo.data.models.*
+import com.juarez.coppeldemo.data.remoteDataSources.GetUserService
+import com.juarez.coppeldemo.data.remoteDataSources.HeroesPagingSource
 import com.juarez.coppeldemo.utils.Constants
+import com.juarez.coppeldemo.utils.NetworkResponse
+import com.juarez.coppeldemo.utils.Resource
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 class HeroRepository @Inject constructor(
     private val heroAPI: HeroAPI,
-    private val heroDao: HeroDao
+    private val heroDao: HeroDao,
+    private val getUserService: GetUserService,
 ) {
 
-    /**
-     * this service emulate pagination because heroes.api does not have one
-     */
-    suspend fun getAllHeroes(page: Int): CustomResponse<List<Hero>> {
-        var customResponse: CustomResponse<List<Hero>>
-        var firstHero = ((page - 1) * 20) + 1
-        val lastHero = ((page - 1) * 20) + 20
-        if (page == 1) firstHero = 1
-        try {
-            val heroes = arrayListOf<Hero>()
-            coroutineScope {
-                val requestsDeferred = (firstHero..lastHero).map { async { heroAPI.getHero(it) } }
-                val requestsResponse = requestsDeferred.awaitAll()
-
-                requestsResponse.forEach { if (it.isSuccessful) heroes.add(it.body()!!) }
-            }
-            customResponse = CustomResponse(isSuccess = true, data = heroes)
-
-        } catch (e: Exception) {
-            customResponse = CustomResponse(message = e.message.toString())
-        }
-        return customResponse
+    fun getHeroes(): Flow<PagingData<Hero>> {
+        return Pager(config = PagingConfig(pageSize = 5), pagingSourceFactory = {
+            HeroesPagingSource(getUserService)
+        }).flow
     }
 
-    suspend fun getHeroDetail(heroId: Int): CustomResponse<Hero> {
-        var customResponse: CustomResponse<Hero>
+    fun getHeroDetail(heroId: Int): Flow<Resource<Hero>> = flow {
+        emit(Resource.Loading)
         try {
             coroutineScope {
+                val hero = Hero()
                 val statsDeferred = async { getHeroPowerStats(heroId) }
                 val bioDeferred = async { getHeroBiography(heroId) }
                 val appearanceDeferred = async { getHeroAppearance(heroId) }
@@ -54,40 +48,54 @@ class HeroRepository @Inject constructor(
                 val connectionsRes = connectionsDeferred.await()
                 val imageRes = imageDeferred.await()
 
-                val hero = Hero(
-                    heroId.toString(),
-                    statsRes.data?.name!!,
-                    imageRes.data!!,
-                    statsRes.data,
-                    bioRes.data!!,
-                    appearanceRes.data!!,
-                    connectionsRes.data!!
-                )
-                customResponse = CustomResponse(isSuccess = true, data = hero)
+                hero.id = heroId.toString()
+                if (statsRes is NetworkResponse.Success) {
+                    hero.name = statsRes.data!!.name!!
+                    hero.powerStats = statsRes.data
+                } else throw Exception(statsRes.message)
+
+                if (imageRes is NetworkResponse.Success) {
+                    hero.image = imageRes.data!!
+                } else throw Exception(imageRes.message)
+
+                if (bioRes is NetworkResponse.Success) {
+                    hero.biography = bioRes.data!!
+                } else throw Exception(bioRes.message)
+
+                if (appearanceRes is NetworkResponse.Success) {
+                    hero.appearance = appearanceRes.data!!
+                } else throw Exception(appearanceRes.message)
+
+                if (connectionsRes is NetworkResponse.Success) {
+                    hero.connections = connectionsRes.data!!
+                } else throw Exception(connectionsRes.message)
+
+                emit(Resource.Success(hero))
             }
         } catch (e: Exception) {
-            customResponse = CustomResponse(message = e.message.toString())
+            emit(Resource.Error(e.localizedMessage ?: "Unexpected error"))
         }
-        return customResponse
     }
 
-    suspend fun getHeroImage(heroId: Int): CustomResponse<Image> {
+    suspend fun getHeroImage(heroId: Int): NetworkResponse<Image> {
         var image = Image()
-        try {
+        return try {
             val imageRes = heroAPI.getHeroImage(heroId)
             if (!imageRes.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
             imageRes.body()?.let {
                 image = Image(it.url)
             }
-            return CustomResponse(isSuccess = true, data = image)
-        } catch (e: Exception) {
-            return CustomResponse(data = image, message = e.message.toString())
+            NetworkResponse.Success(image)
+        } catch (e: HttpException) {
+            NetworkResponse.Error(e.localizedMessage ?: "Unexpected error")
+        } catch (e: IOException) {
+            NetworkResponse.Error(Constants.CONNECTION_ERROR)
         }
     }
 
-    suspend fun getHeroPowerStats(heroId: Int): CustomResponse<PowerStats> {
+    suspend fun getHeroPowerStats(heroId: Int): NetworkResponse<PowerStats> {
         var powerStats = PowerStats()
-        try {
+        return try {
             val power = heroAPI.getHeroPowerStats(heroId)
             if (!power.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
             power.body()?.let {
@@ -96,15 +104,17 @@ class HeroRepository @Inject constructor(
                     it.power, it.combat
                 )
             }
-            return CustomResponse(isSuccess = true, data = powerStats)
-        } catch (e: Exception) {
-            return CustomResponse(data = powerStats, message = e.message.toString())
+            NetworkResponse.Success(powerStats)
+        } catch (e: HttpException) {
+            NetworkResponse.Error(e.localizedMessage ?: "Unexpected error")
+        } catch (e: IOException) {
+            NetworkResponse.Error(Constants.CONNECTION_ERROR)
         }
     }
 
-    suspend fun getHeroBiography(heroId: Int): CustomResponse<Biography> {
+    suspend fun getHeroBiography(heroId: Int): NetworkResponse<Biography> {
         var biography = Biography()
-        try {
+        return try {
             val bio = heroAPI.getHeroBiography(heroId)
             if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
             bio.body()?.let {
@@ -113,16 +123,17 @@ class HeroRepository @Inject constructor(
                     it.firstAppearance, it.publisher, it.alignment
                 )
             }
-            return CustomResponse(isSuccess = true, data = biography)
-
-        } catch (e: Exception) {
-            return CustomResponse(data = biography, message = e.message.toString())
+            NetworkResponse.Success(biography)
+        } catch (e: HttpException) {
+            NetworkResponse.Error(e.localizedMessage ?: "Unexpected error")
+        } catch (e: IOException) {
+            NetworkResponse.Error(Constants.CONNECTION_ERROR)
         }
     }
 
-    suspend fun getHeroAppearance(heroId: Int): CustomResponse<Appearance> {
+    suspend fun getHeroAppearance(heroId: Int): NetworkResponse<Appearance> {
         var appearance = Appearance()
-        try {
+        return try {
             val bio = heroAPI.getHeroAppearance(heroId)
             if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
             bio.body()?.let {
@@ -130,25 +141,27 @@ class HeroRepository @Inject constructor(
                     it.gender, it.race, it.height, it.weight, it.eyeColor, it.hairColor
                 )
             }
-            return CustomResponse(isSuccess = true, data = appearance)
-
-        } catch (e: Exception) {
-            return CustomResponse(data = appearance, message = e.message.toString())
+            NetworkResponse.Success(appearance)
+        } catch (e: HttpException) {
+            NetworkResponse.Error(e.localizedMessage ?: "Unexpected error")
+        } catch (e: IOException) {
+            NetworkResponse.Error(Constants.CONNECTION_ERROR)
         }
     }
 
-    suspend fun getHeroConnections(heroId: Int): CustomResponse<Connections> {
+    suspend fun getHeroConnections(heroId: Int): NetworkResponse<Connections> {
         var connections = Connections()
-        try {
+        return try {
             val bio = heroAPI.getHeroConnections(heroId)
             if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
             bio.body()?.let {
                 connections = Connections(it.groupAffiliation, it.relatives)
             }
-            return CustomResponse(isSuccess = true, data = connections)
-
-        } catch (e: Exception) {
-            return CustomResponse(data = connections, message = e.message.toString())
+            NetworkResponse.Success(connections)
+        } catch (e: HttpException) {
+            NetworkResponse.Error(e.localizedMessage ?: "Unexpected error")
+        } catch (e: IOException) {
+            NetworkResponse.Error(Constants.CONNECTION_ERROR)
         }
     }
 

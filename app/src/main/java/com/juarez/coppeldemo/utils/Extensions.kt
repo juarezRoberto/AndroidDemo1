@@ -16,7 +16,9 @@ fun String.convertToInt(): Int {
 }
 
 fun ImageView.loadImage(url: String?) {
-    Picasso.get().load(url).error(R.drawable.hero_placeholder).into(this)
+    if(!url.isNullOrEmpty()) {
+        Picasso.get().load(url).error(R.drawable.hero_placeholder).into(this)
+    }
 }
 
 

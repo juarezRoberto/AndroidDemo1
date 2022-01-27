@@ -4,5 +4,5 @@ import com.juarez.coppeldemo.data.repositories.HeroRepository
 import javax.inject.Inject
 
 class GetHeroDetailUseCase @Inject constructor(private val repository: HeroRepository) {
-    suspend operator fun invoke(heroId: Int) = repository.getHeroDetail(heroId)
+    operator fun invoke(heroId: Int) = repository.getHeroDetail(heroId)
 }

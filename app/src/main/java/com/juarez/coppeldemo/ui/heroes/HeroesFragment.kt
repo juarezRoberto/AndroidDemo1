@@ -29,10 +29,14 @@ class HeroesFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentHeroesBinding.inflate(inflater, container, false)
 
+        binding.containerHeroesError.isVisible = false
+        binding.btnRetryGetHeroes.setOnClickListener {
+            heroesAdapter.retry()
+        }
         binding.fabShowFavorites.setOnClickListener {
             val action = HeroesFragmentDirections.actionHeroesFragmentToFavoriteHeroesFragment()
             it.findNavController().navigate(action)
@@ -48,8 +52,17 @@ class HeroesFragment : Fragment() {
         }
 
         heroesAdapter.addLoadStateListener {
-            val isLoading = it.refresh is LoadState.Loading
-            binding.progressBarHeroes.isVisible = isLoading
+            if (it.refresh is LoadState.Loading) {
+                binding.containerHeroesError.isVisible = false
+                binding.progressBarHeroes.isVisible = true
+            } else {
+                binding.progressBarHeroes.isVisible = false
+            }
+            if (it.refresh is LoadState.Error) {
+                binding.containerHeroesError.isVisible = true
+                val error = (it.refresh as LoadState.Error).error.localizedMessage
+                binding.txtHeroesError.text = error
+            }
         }
         return binding.root
     }

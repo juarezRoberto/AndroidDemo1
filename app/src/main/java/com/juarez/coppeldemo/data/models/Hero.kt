@@ -5,13 +5,13 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class Hero(
-    val id: String = "",
-    val name: String = "",
-    val image: Image = Image(),
-    val powerStats: PowerStats = PowerStats(),
-    val biography: Biography = Biography(),
-    val appearance: Appearance = Appearance(),
-    val connections: Connections = Connections()
+    var id: String = "",
+    var name: String = "",
+    var image: Image = Image(),
+    var powerStats: PowerStats = PowerStats(),
+    var biography: Biography = Biography(),
+    var appearance: Appearance = Appearance(),
+    var connections: Connections = Connections()
 )
 
 @Entity(tableName = "heroes_table")
