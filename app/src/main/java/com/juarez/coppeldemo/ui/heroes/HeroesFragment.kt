@@ -18,7 +18,6 @@ import com.juarez.coppeldemo.data.models.Hero
 import com.juarez.coppeldemo.databinding.FragmentHeroesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HeroesFragment : Fragment() {
@@ -47,7 +46,7 @@ class HeroesFragment : Fragment() {
                 footer = HeroLoadStateAdapter(heroesAdapter::retry)
             )
         }
-        viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.heroes.collectLatest { heroesAdapter.submitData(it) }
         }
 

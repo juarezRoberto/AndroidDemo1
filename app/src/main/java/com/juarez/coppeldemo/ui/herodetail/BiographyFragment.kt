@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.juarez.coppeldemo.data.models.Hero
@@ -17,6 +18,7 @@ import com.juarez.coppeldemo.ui.sharedviewmodels.HeroDetailViewModel
 import com.juarez.coppeldemo.utils.Constants
 import com.juarez.coppeldemo.utils.loadImage
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class BiographyFragment : Fragment() {
@@ -37,22 +39,32 @@ class BiographyFragment : Fragment() {
         onClickActions()
 
         viewModel.getHeroDetail(heroId)
-        viewModel.hero.observe(viewLifecycleOwner, {
-            binding.progressBarHeroDetail.isVisible = false
-            updateHeroData(it)
-        })
-        viewModel.loading.observe(viewLifecycleOwner, {
-            binding.progressBarHeroDetail.isVisible = true
-        })
-        viewModel.error.observe(viewLifecycleOwner, { message ->
-            if (!message.isNullOrEmpty()) {
-                binding.progressBarHeroDetail.isVisible = false
-                errorAlert(message)
+        lifecycleScope.launchWhenStarted {
+            viewModel.heroState.collect {
+                when (it) {
+                    is HeroState.Loading -> {
+                        binding.progressBarHeroDetail.isVisible = true
+                    }
+                    is HeroState.Error -> {
+                        if (it.message.isNotEmpty()) {
+                            binding.progressBarHeroDetail.isVisible = false
+                            errorAlert(it.message)
+                        }
+                    }
+                    is HeroState.Success -> {
+                        binding.progressBarHeroDetail.isVisible = false
+                        updateHeroData(it.data)
+                    }
+                    else -> Unit
+                }
             }
-        })
-        viewModel.isFavorite.observe(viewLifecycleOwner, {
-            binding.fabAddFavorites.isVisible = it
-        })
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.isFavorite.collect {
+                binding.fabAddFavorites.isVisible = it
+            }
+        }
+
         return binding.root
     }
 

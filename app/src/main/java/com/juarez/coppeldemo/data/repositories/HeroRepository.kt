@@ -77,7 +77,7 @@ class HeroRepository @Inject constructor(
         }
     }
 
-    suspend fun getHeroImage(heroId: Int): NetworkResponse<Image> {
+    private suspend fun getHeroImage(heroId: Int): NetworkResponse<Image> {
         var image = Image()
         return try {
             val imageRes = heroAPI.getHeroImage(heroId)
@@ -93,7 +93,7 @@ class HeroRepository @Inject constructor(
         }
     }
 
-    suspend fun getHeroPowerStats(heroId: Int): NetworkResponse<PowerStats> {
+    private suspend fun getHeroPowerStats(heroId: Int): NetworkResponse<PowerStats> {
         var powerStats = PowerStats()
         return try {
             val power = heroAPI.getHeroPowerStats(heroId)
@@ -112,7 +112,7 @@ class HeroRepository @Inject constructor(
         }
     }
 
-    suspend fun getHeroBiography(heroId: Int): NetworkResponse<Biography> {
+    private suspend fun getHeroBiography(heroId: Int): NetworkResponse<Biography> {
         var biography = Biography()
         return try {
             val bio = heroAPI.getHeroBiography(heroId)
@@ -131,7 +131,7 @@ class HeroRepository @Inject constructor(
         }
     }
 
-    suspend fun getHeroAppearance(heroId: Int): NetworkResponse<Appearance> {
+    private suspend fun getHeroAppearance(heroId: Int): NetworkResponse<Appearance> {
         var appearance = Appearance()
         return try {
             val bio = heroAPI.getHeroAppearance(heroId)
@@ -149,7 +149,7 @@ class HeroRepository @Inject constructor(
         }
     }
 
-    suspend fun getHeroConnections(heroId: Int): NetworkResponse<Connections> {
+    private suspend fun getHeroConnections(heroId: Int): NetworkResponse<Connections> {
         var connections = Connections()
         return try {
             val bio = heroAPI.getHeroConnections(heroId)

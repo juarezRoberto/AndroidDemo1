@@ -13,7 +13,7 @@ import com.juarez.coppeldemo.data.adapters.FavoritesAdapter
 import com.juarez.coppeldemo.data.models.Hero
 import com.juarez.coppeldemo.databinding.FragmentFavoriteHeroesBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class FavoriteHeroesFragment : Fragment() {
@@ -21,22 +21,23 @@ class FavoriteHeroesFragment : Fragment() {
     private var _binding: FragmentFavoriteHeroesBinding? = null
     private val binding get() = _binding!!
     private val favoritesAdapter =
-        FavoritesAdapter(arrayListOf(), { onItemClicked(it) }, { onItemRemoved(it) })
+        FavoritesAdapter({ onItemClicked(it) }, { onItemRemoved(it) })
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentFavoriteHeroesBinding.inflate(inflater, container, false)
 
         binding.recyclerFavorites.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = favoritesAdapter
+            setHasFixedSize(true)
         }
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.favoriteHeroes.observe(viewLifecycleOwner, {
-                favoritesAdapter.updateData(it)
-            })
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.favoriteHeroes.collectLatest {
+                favoritesAdapter.submitList(it)
+            }
         }
         return binding.root
     }

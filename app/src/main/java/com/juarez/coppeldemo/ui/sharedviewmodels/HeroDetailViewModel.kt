@@ -1,12 +1,17 @@
 package com.juarez.coppeldemo.ui.sharedviewmodels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.juarez.coppeldemo.data.models.Hero
 import com.juarez.coppeldemo.domain.GetHeroDetailUseCase
 import com.juarez.coppeldemo.domain.IsFavoriteHeroUseCase
 import com.juarez.coppeldemo.domain.SaveFavoriteHeroUseCase
+import com.juarez.coppeldemo.ui.herodetail.HeroState
 import com.juarez.coppeldemo.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -20,32 +25,31 @@ class HeroDetailViewModel @Inject constructor(
     private val state: SavedStateHandle,
 ) :
     ViewModel() {
-    private val _isFavorite = MutableLiveData<Boolean>()
-    val isFavorite: LiveData<Boolean> = _isFavorite
-    private val _hero = MutableLiveData<Hero>()
-    val hero: LiveData<Hero> = _hero
-    private val _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> = _loading
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> = _error
-    private val _url = MutableLiveData(state.get("hero_url") ?: "")
-    val url: LiveData<String> = _url
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite: StateFlow<Boolean> = _isFavorite
+    private val _hero = MutableStateFlow(Hero())
+    val hero: StateFlow<Hero> = _hero
+    private val _url = MutableStateFlow(state.get("hero_url") ?: "")
+    val url: StateFlow<String> = _url
+
+    private val _heroState = MutableStateFlow<HeroState>(HeroState.Empty)
+    val heroState: StateFlow<HeroState> = _heroState
 
     fun getHeroDetail(heroId: Int) {
         getHeroDetailUseCase(heroId).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _loading.value = true
                     _isFavorite.value = false
-                    _error.value = ""
+                    _heroState.value = HeroState.Error("")
+                    _heroState.value = HeroState.Loading
                 }
                 is Resource.Success -> {
-                    result.data.also { hero -> _hero.value = hero }
-                    saveUrl(result.data.image.url)
+                    _heroState.value = HeroState.Success(result.data)
+                    saveUrl(result.data.image.url ?: "")
                     getIsFavoriteHeroById(heroId)
                 }
                 is Resource.Error -> {
-                    _error.value = result.message
+                    _heroState.value = HeroState.Error(result.message)
                 }
             }
         }.launchIn(viewModelScope)
@@ -63,7 +67,7 @@ class HeroDetailViewModel @Inject constructor(
     /**
      * update url LiveData and set value in state
      */
-    private fun saveUrl(url: String?) {
+    private fun saveUrl(url: String) {
         _url.value = url
         state.set("hero_url", url)
     }

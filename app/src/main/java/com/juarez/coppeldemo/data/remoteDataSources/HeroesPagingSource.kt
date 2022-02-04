@@ -3,7 +3,6 @@ package com.juarez.coppeldemo.data.remoteDataSources
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.juarez.coppeldemo.data.models.Hero
-import com.juarez.coppeldemo.data.repositories.HeroRepository
 import com.juarez.coppeldemo.utils.Constants
 import com.juarez.coppeldemo.utils.NetworkResponse
 import retrofit2.HttpException

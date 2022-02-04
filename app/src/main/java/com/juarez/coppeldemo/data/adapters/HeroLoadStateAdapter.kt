@@ -1,6 +1,5 @@
 package com.juarez.coppeldemo.data.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -18,7 +17,6 @@ class HeroLoadStateAdapter(private val retry: () -> Unit) :
 
     override fun onBindViewHolder(holder: HeroLoadStateViewHolder, loadState: LoadState) {
         with(holder) {
-            Log.d("state", loadState.toString())
             if (loadState is LoadState.Error) {
                 binding.txtError.text = loadState.error.localizedMessage
             }
@@ -33,7 +31,7 @@ class HeroLoadStateAdapter(private val retry: () -> Unit) :
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        loadState: LoadState
+        loadState: LoadState,
     ) = HeroLoadStateViewHolder(
         ItemHeroLoadingStateBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
