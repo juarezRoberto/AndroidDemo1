@@ -8,7 +8,7 @@ import com.juarez.coppeldemo.utils.NetworkResponse
 import retrofit2.HttpException
 import java.io.IOException
 
-class HeroesPagingSource(private val getUserService: GetUserService) :
+class HeroesPagingSource(private val getHeroesService: GetHeroesService) :
     PagingSource<Int, Hero>() {
     override fun getRefreshKey(state: PagingState<Int, Hero>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -22,7 +22,7 @@ class HeroesPagingSource(private val getUserService: GetUserService) :
         return try {
             val nextPageNumber = params.key ?: 1
             val heroes = arrayListOf<Hero>()
-            val response = getUserService(nextPageNumber)
+            val response = getHeroesService(nextPageNumber)
             if (response is NetworkResponse.Success<*>) {
                 response.data?.let { heroes.addAll(it) }
             }

@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import com.juarez.coppeldemo.api.HeroAPI
 import com.juarez.coppeldemo.data.db.HeroDao
 import com.juarez.coppeldemo.data.models.*
-import com.juarez.coppeldemo.data.remoteDataSources.GetUserService
+import com.juarez.coppeldemo.data.remoteDataSources.GetHeroesService
 import com.juarez.coppeldemo.data.remoteDataSources.HeroesPagingSource
 import com.juarez.coppeldemo.utils.Constants
 import com.juarez.coppeldemo.utils.NetworkResponse
@@ -23,12 +23,12 @@ import javax.inject.Inject
 class HeroRepository @Inject constructor(
     private val heroAPI: HeroAPI,
     private val heroDao: HeroDao,
-    private val getUserService: GetUserService,
+    private val getHeroesService: GetHeroesService,
 ) {
 
     fun getHeroes(): Flow<PagingData<Hero>> {
         return Pager(config = PagingConfig(pageSize = 5), pagingSourceFactory = {
-            HeroesPagingSource(getUserService)
+            HeroesPagingSource(getHeroesService)
         }).flow
     }
 

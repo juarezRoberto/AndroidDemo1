@@ -11,7 +11,7 @@ import javax.inject.Inject
 /**
  * this service emulate pagination because heroes.api does not have one
  */
-class GetUserService @Inject constructor(private val heroAPI: HeroAPI) {
+class GetHeroesService @Inject constructor(private val heroAPI: HeroAPI) {
     suspend operator fun invoke(page: Int): NetworkResponse<List<Hero>> {
         var firstHero = ((page - 1) * 20) + 1
         val lastHero = ((page - 1) * 20) + 20
