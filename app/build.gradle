@@ -51,11 +51,11 @@ dependencies {
 
     // ViewModel, liveData
     def lifecycle_version = "2.4.1"
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     //coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
-    // webservice
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
+    // retrofit
     def retrofit_version = "2.9.0"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
@@ -63,11 +63,11 @@ dependencies {
     //picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     //paging
-    implementation("androidx.paging:paging-runtime-ktx:3.1.0")
+    implementation "androidx.paging:paging-runtime-ktx:3.1.0"
     //hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    //Navigation
+    //navigation component
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     // Room
