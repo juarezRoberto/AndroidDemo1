@@ -73,7 +73,7 @@ class HeroRepository @Inject constructor(
                 emit(Resource.Success(hero))
             }
         } catch (e: Exception) {
-            emit(Resource.Error(e.localizedMessage ?: "Unexpected error"))
+            emit(Resource.Error(e.localizedMessage ?: Constants.UNEXPECTED_ERROR))
         }
     }
 
@@ -87,7 +87,7 @@ class HeroRepository @Inject constructor(
             }
             NetworkResponse.Success(image)
         } catch (e: HttpException) {
-            NetworkResponse.Error(e.localizedMessage ?: "Unexpected error")
+            NetworkResponse.Error(e.localizedMessage ?: Constants.UNEXPECTED_ERROR)
         } catch (e: IOException) {
             NetworkResponse.Error(Constants.CONNECTION_ERROR)
         }
@@ -106,7 +106,7 @@ class HeroRepository @Inject constructor(
             }
             NetworkResponse.Success(powerStats)
         } catch (e: HttpException) {
-            NetworkResponse.Error(e.localizedMessage ?: "Unexpected error")
+            NetworkResponse.Error(e.localizedMessage ?: Constants.UNEXPECTED_ERROR)
         } catch (e: IOException) {
             NetworkResponse.Error(Constants.CONNECTION_ERROR)
         }
@@ -125,7 +125,7 @@ class HeroRepository @Inject constructor(
             }
             NetworkResponse.Success(biography)
         } catch (e: HttpException) {
-            NetworkResponse.Error(e.localizedMessage ?: "Unexpected error")
+            NetworkResponse.Error(e.localizedMessage ?: Constants.UNEXPECTED_ERROR)
         } catch (e: IOException) {
             NetworkResponse.Error(Constants.CONNECTION_ERROR)
         }
@@ -143,7 +143,7 @@ class HeroRepository @Inject constructor(
             }
             NetworkResponse.Success(appearance)
         } catch (e: HttpException) {
-            NetworkResponse.Error(e.localizedMessage ?: "Unexpected error")
+            NetworkResponse.Error(e.localizedMessage ?: Constants.UNEXPECTED_ERROR)
         } catch (e: IOException) {
             NetworkResponse.Error(Constants.CONNECTION_ERROR)
         }
@@ -159,7 +159,7 @@ class HeroRepository @Inject constructor(
             }
             NetworkResponse.Success(connections)
         } catch (e: HttpException) {
-            NetworkResponse.Error(e.localizedMessage ?: "Unexpected error")
+            NetworkResponse.Error(e.localizedMessage ?: Constants.UNEXPECTED_ERROR)
         } catch (e: IOException) {
             NetworkResponse.Error(Constants.CONNECTION_ERROR)
         }

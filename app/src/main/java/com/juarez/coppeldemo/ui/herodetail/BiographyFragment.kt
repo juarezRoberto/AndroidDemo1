@@ -8,7 +8,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.juarez.coppeldemo.data.models.Hero
@@ -18,7 +20,7 @@ import com.juarez.coppeldemo.ui.sharedviewmodels.HeroDetailViewModel
 import com.juarez.coppeldemo.utils.Constants
 import com.juarez.coppeldemo.utils.loadImage
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class BiographyFragment : Fragment() {
@@ -39,29 +41,35 @@ class BiographyFragment : Fragment() {
         onClickActions()
 
         viewModel.getHeroDetail(heroId)
-        lifecycleScope.launchWhenStarted {
-            viewModel.heroState.collect {
-                when (it) {
-                    is HeroState.Loading -> {
-                        binding.progressBarHeroDetail.isVisible = true
-                    }
-                    is HeroState.Error -> {
-                        if (it.message.isNotEmpty()) {
-                            binding.progressBarHeroDetail.isVisible = false
-                            errorAlert(it.message)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.heroState.collect {
+                        when (it) {
+                            is HeroState.Loading -> {
+                                binding.progressBarHeroDetail.isVisible = true
+                            }
+                            is HeroState.Error -> {
+                                if (it.message.isNotEmpty()) {
+                                    binding.progressBarHeroDetail.isVisible = false
+                                    errorAlert(it.message)
+                                }
+                            }
+                            is HeroState.Success -> {
+                                binding.progressBarHeroDetail.isVisible = false
+                                updateHeroData(it.data)
+                            }
+                            else -> Unit
                         }
                     }
-                    is HeroState.Success -> {
-                        binding.progressBarHeroDetail.isVisible = false
-                        updateHeroData(it.data)
-                    }
-                    else -> Unit
                 }
-            }
-        }
-        lifecycleScope.launchWhenStarted {
-            viewModel.isFavorite.collect {
-                binding.fabAddFavorites.isVisible = it
+
+                launch {
+                    viewModel.isFavorite.collect {
+                        binding.fabAddFavorites.isVisible = it
+                    }
+                }
             }
         }
 

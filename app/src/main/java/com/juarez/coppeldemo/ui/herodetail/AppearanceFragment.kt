@@ -6,13 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.juarez.coppeldemo.data.models.Hero
 import com.juarez.coppeldemo.databinding.FragmentAppearanceBinding
 import com.juarez.coppeldemo.ui.sharedviewmodels.HeroDetailViewModel
 import com.juarez.coppeldemo.utils.Constants
 import com.juarez.coppeldemo.utils.loadImage
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class AppearanceFragment : Fragment() {
     private val viewModel: HeroDetailViewModel by activityViewModels()
@@ -24,13 +26,18 @@ class AppearanceFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentAppearanceBinding.inflate(inflater, container, false)
-        lifecycleScope.launchWhenStarted {
-            viewModel.heroState.collect {
-                if (it is HeroState.Success) updateAppearanceData(it.data)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.heroState.collect {
+                        if (it is HeroState.Success) updateAppearanceData(it.data)
+                    }
+                }
+                launch {
+                    viewModel.url.collect { binding.imgAppearancePhoto.loadImage(it) }
+                }
             }
-        }
-        lifecycleScope.launchWhenStarted {
-            viewModel.url.collect { binding.imgAppearancePhoto.loadImage(it) }
         }
         return binding.root
     }

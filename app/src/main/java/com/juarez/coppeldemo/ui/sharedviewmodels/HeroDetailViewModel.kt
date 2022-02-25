@@ -65,7 +65,7 @@ class HeroDetailViewModel @Inject constructor(
     }
 
     /**
-     * update url LiveData and set value in state
+     * update url and set value in state
      */
     private fun saveUrl(url: String) {
         _url.value = url

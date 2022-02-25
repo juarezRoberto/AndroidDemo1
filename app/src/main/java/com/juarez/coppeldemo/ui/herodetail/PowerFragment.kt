@@ -6,14 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.juarez.coppeldemo.data.models.Hero
 import com.juarez.coppeldemo.databinding.FragmentPowerBinding
 import com.juarez.coppeldemo.ui.sharedviewmodels.HeroDetailViewModel
 import com.juarez.coppeldemo.utils.convertToInt
 import com.juarez.coppeldemo.utils.loadImage
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PowerFragment : Fragment() {
@@ -26,14 +28,17 @@ class PowerFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentPowerBinding.inflate(inflater, container, false)
-        lifecycleScope.launchWhenStarted {
-            viewModel.heroState.collect {
-                if (it is HeroState.Success) updatePowerStatesData(it.data)
-            }
-        }
-        lifecycleScope.launchWhenStarted {
-            viewModel.url.collect {
-                binding.imgPowerPhoto.loadImage(it)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.heroState.collect {
+                        if (it is HeroState.Success) updatePowerStatesData(it.data)
+                    }
+                }
+                launch {
+                    viewModel.url.collect { binding.imgPowerPhoto.loadImage(it) }
+                }
             }
         }
         return binding.root

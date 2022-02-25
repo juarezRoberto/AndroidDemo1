@@ -19,24 +19,28 @@ class HeroesPagingSource(private val getHeroesService: GetHeroesService) :
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Hero> {
 
-        return try {
+        try {
             val nextPageNumber = params.key ?: 1
             val heroes = arrayListOf<Hero>()
             val response = getHeroesService(nextPageNumber)
-            if (response is NetworkResponse.Success<*>) {
+            if (response is NetworkResponse.Success) {
                 response.data?.let { heroes.addAll(it) }
             }
 
-            LoadResult.Page(
+            return LoadResult.Page(
                 data = heroes,
                 prevKey = null, // only fordward
                 nextKey = nextPageNumber + 1
             )
-        } catch (exception: HttpException) {
-            LoadResult.Error(exception)
-        } catch (exception: IOException) {
-            LoadResult.Error(Exception(Constants.CONNECTION_ERROR))
+        } catch (exception: Exception) {
+            if (exception is HttpException) return LoadResult.Error(Throwable("un Http Exception"))
+            if (exception is IOException) return LoadResult.Error(Throwable(Constants.CONNECTION_ERROR))
+
+            return LoadResult.Error(exception)
         }
+//        catch (exception: IOException) {
+//            LoadResult.Error(Exception(Constants.CONNECTION_ERROR))
+//        }
     }
 
 }

@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -18,6 +20,7 @@ import com.juarez.coppeldemo.data.models.Hero
 import com.juarez.coppeldemo.databinding.FragmentHeroesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HeroesFragment : Fragment() {
@@ -46,8 +49,11 @@ class HeroesFragment : Fragment() {
                 footer = HeroLoadStateAdapter(heroesAdapter::retry)
             )
         }
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.heroes.collectLatest { heroesAdapter.submitData(it) }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.heroes
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { heroesAdapter.submitData(it) }
         }
 
         heroesAdapter.addLoadStateListener {

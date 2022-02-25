@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,6 +16,7 @@ import com.juarez.coppeldemo.data.models.Hero
 import com.juarez.coppeldemo.databinding.FragmentFavoriteHeroesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FavoriteHeroesFragment : Fragment() {
@@ -34,10 +37,10 @@ class FavoriteHeroesFragment : Fragment() {
             adapter = favoritesAdapter
             setHasFixedSize(true)
         }
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.favoriteHeroes.collectLatest {
-                favoritesAdapter.submitList(it)
-            }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.favoriteHeroes
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { favoritesAdapter.submitList(it) }
         }
         return binding.root
     }

@@ -9,4 +9,5 @@ object Constants {
     const val ALERT_CANCEL = "Cancelar"
     const val ALERT_RETRY = "Reintentar"
     const val CONNECTION_ERROR = "Revisa tu conexión a internet y vuelve a intentarlo."
+    const val UNEXPECTED_ERROR = "Unexpected error"
 }

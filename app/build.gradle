@@ -51,8 +51,9 @@ dependencies {
 
     // ViewModel, liveData
     def lifecycle_version = "2.4.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+//    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     //coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
     // retrofit
