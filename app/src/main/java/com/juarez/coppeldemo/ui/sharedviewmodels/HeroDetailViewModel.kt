@@ -55,10 +55,11 @@ class HeroDetailViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun saveFavoriteHero(hero: Hero) = viewModelScope.launch {
-        saveFavoriteHeroUseCase(hero)
-        getIsFavoriteHeroById(hero.id.toInt())
-    }
+    fun saveFavoriteHero(hero: Hero) =
+        viewModelScope.launch {
+            saveFavoriteHeroUseCase(hero)
+            getIsFavoriteHeroById(hero.id.toInt())
+        }
 
     private suspend fun getIsFavoriteHeroById(heroId: Int) {
         isFavoriteHeroUseCase(heroId).also { _isFavorite.value = it }

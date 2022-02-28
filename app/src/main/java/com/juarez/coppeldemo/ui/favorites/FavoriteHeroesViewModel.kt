@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteHeroesViewModel @Inject constructor(
-    private val getFavoriteHeroesUseCase: GetFavoriteHeroesUseCase,
+    getFavoriteHeroesUseCase: GetFavoriteHeroesUseCase,
     private val removeFavoriteHeroUseCase: RemoveFavoriteHeroUseCase,
 ) : ViewModel() {
 

@@ -3,6 +3,7 @@ package com.juarez.coppeldemo.di
 import android.content.Context
 import androidx.room.Room
 import com.juarez.coppeldemo.data.db.AppDatabase
+import com.juarez.coppeldemo.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,10 +18,11 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext appContext: Context): AppDatabase {
-        return Room.databaseBuilder(appContext, AppDatabase::class.java, "myApp.db").build()
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(context, AppDatabase::class.java, Constants.DB_NAME).build()
     }
 
+    @Singleton
     @Provides
     fun provideHeroDao(database: AppDatabase) = database.heroDao()
 }

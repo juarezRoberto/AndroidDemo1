@@ -3,6 +3,10 @@ package com.juarez.coppeldemo.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.juarez.coppeldemo.api.HeroAPI
+import com.juarez.coppeldemo.data.db.HeroDao
+import com.juarez.coppeldemo.data.remoteDataSources.GetHeroesService
+import com.juarez.coppeldemo.data.repositories.HeroRepository
+import com.juarez.coppeldemo.data.repositories.HeroRepositoryImp
 import com.juarez.coppeldemo.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -61,10 +65,20 @@ object AppModule {
         .client(client)
         .build()
 
+    @Singleton
     @Provides
     fun provideGson(): Gson = GsonBuilder().create()
 
+    @Singleton
     @Provides
     fun provideHeroAPI(retrofit: Retrofit): HeroAPI = retrofit.create(HeroAPI::class.java)
 
+    @Provides
+    fun provideHeroRepository(
+        heroAPI: HeroAPI,
+        heroDao: HeroDao,
+        getHeroesService: GetHeroesService,
+    ): HeroRepository {
+        return HeroRepositoryImp(heroAPI, heroDao, getHeroesService)
+    }
 }

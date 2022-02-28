@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class HeroViewModel @Inject constructor(private val getHeroesUseCase: GetHeroesUseCase) :
-    ViewModel() {
-
+class HeroViewModel @Inject constructor(getHeroesUseCase: GetHeroesUseCase) : ViewModel() {
     val heroes: Flow<PagingData<Hero>> = getHeroesUseCase().cachedIn(viewModelScope)
 }

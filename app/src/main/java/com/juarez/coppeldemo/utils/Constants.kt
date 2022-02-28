@@ -1,6 +1,7 @@
 package com.juarez.coppeldemo.utils
 
 object Constants {
+    const val DB_NAME = "myApp.db"
     const val GENERAL_ERROR = "Un error ha ocurrido intentalo más tarde"
     const val ACCESS_TOKEN = "3221764271387432"
     const val NO_AVAILABLE = " No disponible"

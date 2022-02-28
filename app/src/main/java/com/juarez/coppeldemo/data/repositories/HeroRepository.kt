@@ -20,19 +20,28 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class HeroRepository @Inject constructor(
+interface HeroRepository {
+    val favoriteHeroes: Flow<List<Hero>>
+    fun getHeroes(): Flow<PagingData<Hero>>
+    fun getHeroDetail(heroId: Int): Flow<Resource<Hero>>
+    suspend fun saveFavoriteHero(hero: Hero)
+    suspend fun getFavoriteById(heroId: Int): HeroEntity?
+    suspend fun removeFavoriteHero(heroId: Int)
+}
+
+class HeroRepositoryImp @Inject constructor(
     private val heroAPI: HeroAPI,
     private val heroDao: HeroDao,
     private val getHeroesService: GetHeroesService,
-) {
+) : HeroRepository {
 
-    fun getHeroes(): Flow<PagingData<Hero>> {
+    override fun getHeroes(): Flow<PagingData<Hero>> {
         return Pager(config = PagingConfig(pageSize = 5), pagingSourceFactory = {
             HeroesPagingSource(getHeroesService)
         }).flow
     }
 
-    fun getHeroDetail(heroId: Int): Flow<Resource<Hero>> = flow {
+    override fun getHeroDetail(heroId: Int): Flow<Resource<Hero>> = flow {
         emit(Resource.Loading)
         try {
             coroutineScope {
@@ -165,21 +174,13 @@ class HeroRepository @Inject constructor(
         }
     }
 
-    suspend fun saveFavoriteHero(hero: HeroEntity) {
-        val fav = getFavoriteById(hero.id)
-        if (fav == null) heroDao.insert(hero)
-    }
+    override suspend fun saveFavoriteHero(hero: Hero) = heroDao.insert(hero.toEntity())
 
-    suspend fun getFavoriteById(heroId: Int) = heroDao.getFavoriteHeroById(heroId)
+    override suspend fun getFavoriteById(heroId: Int) = heroDao.getFavoriteHeroById(heroId)
 
-    suspend fun isFavoriteHero(heroId: Int): Boolean {
-        val hero = getFavoriteById(heroId)
-        return hero == null
-    }
+    override suspend fun removeFavoriteHero(heroId: Int) = heroDao.removeFavoriteHero(heroId)
 
-    suspend fun removeFavoriteHero(heroId: Int) = heroDao.removeFavoriteHero(heroId)
-
-    val favoriteHeroes = heroDao.getAllHeroes().map { heroEntities ->
+    override val favoriteHeroes: Flow<List<Hero>> = heroDao.getAllHeroes().map { heroEntities ->
         heroEntities.map { heroEntity -> heroEntity.toModel() }
     }
 }
