@@ -3,10 +3,10 @@ package com.juarez.coppeldemo.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.juarez.coppeldemo.api.HeroAPI
-import com.juarez.coppeldemo.data.db.HeroDao
-import com.juarez.coppeldemo.data.remoteDataSources.GetHeroesService
-import com.juarez.coppeldemo.data.repositories.HeroRepository
-import com.juarez.coppeldemo.data.repositories.HeroRepositoryImp
+import com.juarez.coppeldemo.db.HeroDao
+import com.juarez.coppeldemo.heroes.data.HeroRepository
+import com.juarez.coppeldemo.heroes.data.HeroRepositoryImp
+import com.juarez.coppeldemo.heroes.heroes.data.GetHeroesService
 import com.juarez.coppeldemo.utils.Constants
 import dagger.Module
 import dagger.Provides

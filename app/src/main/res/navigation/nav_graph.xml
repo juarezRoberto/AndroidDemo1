@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/heroesFragment"
-        android:name="com.juarez.coppeldemo.ui.heroes.HeroesFragment"
+        android:name="com.juarez.coppeldemo.heroes.heroes.presentation.HeroesFragment"
         android:label="heroes"
         tools:layout="@layout/fragment_heroes">
         <action
@@ -28,12 +28,12 @@
 
     <fragment
         android:id="@+id/connectionsFragment"
-        android:name="com.juarez.coppeldemo.ui.herodetail.ConnectionsFragment"
+        android:name="com.juarez.coppeldemo.heroes.hero_detail.presentation.ConnectionsFragment"
         android:label="hero detail"
         tools:layout="@layout/fragment_connections" />
     <fragment
         android:id="@+id/biographyFragment"
-        android:name="com.juarez.coppeldemo.ui.herodetail.BiographyFragment"
+        android:name="com.juarez.coppeldemo.heroes.hero_detail.presentation.BiographyFragment"
         android:label="{screen_name}"
         tools:layout="@layout/fragment_biography">
         <argument
@@ -54,19 +54,19 @@
     </fragment>
     <fragment
         android:id="@+id/powerFragment"
-        android:name="com.juarez.coppeldemo.ui.herodetail.PowerFragment"
+        android:name="com.juarez.coppeldemo.heroes.hero_detail.presentation.PowerFragment"
         android:label="power"
         tools:layout="@layout/fragment_power" />
     <fragment
         android:id="@+id/appearanceFragment"
-        android:name="com.juarez.coppeldemo.ui.herodetail.AppearanceFragment"
+        android:name="com.juarez.coppeldemo.heroes.hero_detail.presentation.AppearanceFragment"
         android:label="appearance"
         tools:layout="@layout/fragment_appearance" />
     <fragment
         android:id="@+id/favoriteHeroesFragment"
-        android:name="com.juarez.coppeldemo.ui.favorites.FavoriteHeroesFragment"
+        android:name="com.juarez.coppeldemo.heroes.favorites.presentation.FavoriteHeroesFragment"
         android:label="favorites"
-        tools:layout="@layout/fragment_favorite_heroes" >
+        tools:layout="@layout/fragment_favorite_heroes">
         <action
             android:id="@+id/action_favoriteHeroesFragment_to_biographyFragment"
             app:destination="@id/biographyFragment" />
