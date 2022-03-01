@@ -3,6 +3,7 @@ package com.juarez.coppeldemo.di
 import android.content.Context
 import androidx.room.Room
 import com.juarez.coppeldemo.db.AppDatabase
+import com.juarez.coppeldemo.db.HeroDao
 import com.juarez.coppeldemo.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -24,5 +25,7 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideHeroDao(database: AppDatabase) = database.heroDao()
+    fun provideHeroDao(database: AppDatabase): HeroDao {
+        return database.heroDao()
+    }
 }
