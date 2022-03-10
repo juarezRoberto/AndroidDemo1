@@ -9,7 +9,6 @@ import com.juarez.coppeldemo.heroes.heroes.data.GetHeroesService
 import com.juarez.coppeldemo.heroes.heroes.data.HeroesPagingSource
 import com.juarez.coppeldemo.utils.Constants
 import com.juarez.coppeldemo.utils.NetworkResponse
-import com.juarez.coppeldemo.utils.Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -17,18 +16,17 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
 import java.io.IOException
-import javax.inject.Inject
 
 interface HeroRepository {
     val favoriteHeroes: Flow<List<Hero>>
     fun getHeroes(): Flow<PagingData<Hero>>
-    fun getHeroDetail(heroId: Int): Flow<Resource<Hero>>
+    fun getHeroDetail(heroId: Int): Flow<Hero>
     suspend fun saveFavoriteHero(hero: Hero)
     suspend fun getFavoriteById(heroId: Int): HeroEntity?
     suspend fun removeFavoriteHero(heroId: Int)
 }
 
-class HeroRepositoryImp @Inject constructor(
+class HeroRepositoryImp(
     private val heroAPI: HeroAPI,
     private val heroDao: HeroDao,
     private val getHeroesService: GetHeroesService,
@@ -40,48 +38,43 @@ class HeroRepositoryImp @Inject constructor(
         }).flow
     }
 
-    override fun getHeroDetail(heroId: Int): Flow<Resource<Hero>> = flow {
-        emit(Resource.Loading)
-        try {
-            coroutineScope {
-                val hero = Hero()
-                val statsDeferred = async { getHeroPowerStats(heroId) }
-                val bioDeferred = async { getHeroBiography(heroId) }
-                val appearanceDeferred = async { getHeroAppearance(heroId) }
-                val connectionsDeferred = async { getHeroConnections(heroId) }
-                val imageDeferred = async { getHeroImage(heroId) }
-                val statsRes = statsDeferred.await()
-                val bioRes = bioDeferred.await()
-                val appearanceRes = appearanceDeferred.await()
-                val connectionsRes = connectionsDeferred.await()
-                val imageRes = imageDeferred.await()
+    override fun getHeroDetail(heroId: Int): Flow<Hero> = flow {
+        coroutineScope {
+            val hero = Hero()
+            val statsDeferred = async { getHeroPowerStats(heroId) }
+            val bioDeferred = async { getHeroBiography(heroId) }
+            val appearanceDeferred = async { getHeroAppearance(heroId) }
+            val connectionsDeferred = async { getHeroConnections(heroId) }
+            val imageDeferred = async { getHeroImage(heroId) }
+            val statsRes = statsDeferred.await()
+            val bioRes = bioDeferred.await()
+            val appearanceRes = appearanceDeferred.await()
+            val connectionsRes = connectionsDeferred.await()
+            val imageRes = imageDeferred.await()
 
-                hero.id = heroId.toString()
-                if (statsRes is NetworkResponse.Success) {
-                    hero.name = statsRes.data!!.name!!
-                    hero.powerStats = statsRes.data
-                } else throw Exception(statsRes.message)
+            hero.id = heroId.toString()
+            if (statsRes is NetworkResponse.Success) {
+                hero.name = statsRes.data!!.name!!
+                hero.powerStats = statsRes.data
+            } else throw Exception(statsRes.message)
 
-                if (imageRes is NetworkResponse.Success) {
-                    hero.image = imageRes.data!!
-                } else throw Exception(imageRes.message)
+            if (imageRes is NetworkResponse.Success) {
+                hero.image = imageRes.data!!
+            } else throw Exception(imageRes.message)
 
-                if (bioRes is NetworkResponse.Success) {
-                    hero.biography = bioRes.data!!
-                } else throw Exception(bioRes.message)
+            if (bioRes is NetworkResponse.Success) {
+                hero.biography = bioRes.data!!
+            } else throw Exception(bioRes.message)
 
-                if (appearanceRes is NetworkResponse.Success) {
-                    hero.appearance = appearanceRes.data!!
-                } else throw Exception(appearanceRes.message)
+            if (appearanceRes is NetworkResponse.Success) {
+                hero.appearance = appearanceRes.data!!
+            } else throw Exception(appearanceRes.message)
 
-                if (connectionsRes is NetworkResponse.Success) {
-                    hero.connections = connectionsRes.data!!
-                } else throw Exception(connectionsRes.message)
+            if (connectionsRes is NetworkResponse.Success) {
+                hero.connections = connectionsRes.data!!
+            } else throw Exception(connectionsRes.message)
 
-                emit(Resource.Success(hero))
-            }
-        } catch (e: Exception) {
-            emit(Resource.Error(e.localizedMessage ?: Constants.UNEXPECTED_ERROR))
+            emit(hero)
         }
     }
 

@@ -90,7 +90,8 @@ class BiographyFragment : Fragment() {
         }
         binding.fabAddFavorites.setOnClickListener {
             viewModel.saveFavoriteHero(
-                Hero(id = "$heroId", name = heroName, image = Image(heroUrl)))
+                Hero(id = "$heroId", name = heroName, image = Image(heroUrl))
+            )
         }
     }
 
@@ -123,6 +124,7 @@ class BiographyFragment : Fragment() {
         }
         builder.setNegativeButton(Constants.ALERT_CANCEL) { dialog, _ ->
             dialog.dismiss()
+            requireActivity().onBackPressed()
         }
         builder.show()
     }

@@ -7,12 +7,8 @@ import com.juarez.coppeldemo.heroes.data.Hero
 import com.juarez.coppeldemo.heroes.hero_detail.domain.GetHeroDetailUseCase
 import com.juarez.coppeldemo.heroes.hero_detail.domain.IsFavoriteHeroUseCase
 import com.juarez.coppeldemo.heroes.hero_detail.domain.SaveFavoriteHeroUseCase
-import com.juarez.coppeldemo.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,30 +31,22 @@ class HeroDetailViewModel @Inject constructor(
     val heroState: StateFlow<HeroState> = _heroState
 
     fun getHeroDetail(heroId: Int) {
-        getHeroDetailUseCase(heroId).onEach { result ->
-            when (result) {
-                is Resource.Loading -> {
-                    _isFavorite.value = false
-                    _heroState.value = HeroState.Error("")
-                    _heroState.value = HeroState.Loading
-                }
-                is Resource.Success -> {
-                    _heroState.value = HeroState.Success(result.data)
-                    saveUrl(result.data.image.url ?: "")
-                    getIsFavoriteHeroById(heroId)
-                }
-                is Resource.Error -> {
-                    _heroState.value = HeroState.Error(result.message)
-                }
-            }
+        _isFavorite.value = false
+        _heroState.value = HeroState.Error("")
+        _heroState.value = HeroState.Loading
+        getHeroDetailUseCase(heroId).onEach { hero ->
+            _heroState.value = HeroState.Success(hero)
+            saveUrl(hero.image.url ?: "")
+            getIsFavoriteHeroById(heroId)
+        }.catch { e ->
+            _heroState.value = HeroState.Error(e.localizedMessage ?: "Unexpected Error")
         }.launchIn(viewModelScope)
     }
 
-    fun saveFavoriteHero(hero: Hero) =
-        viewModelScope.launch {
-            saveFavoriteHeroUseCase(hero)
-            getIsFavoriteHeroById(hero.id.toInt())
-        }
+    fun saveFavoriteHero(hero: Hero) = viewModelScope.launch {
+        saveFavoriteHeroUseCase(hero)
+        getIsFavoriteHeroById(hero.id.toInt())
+    }
 
     private suspend fun getIsFavoriteHeroById(heroId: Int) {
         isFavoriteHeroUseCase(heroId).also { _isFavorite.value = it }
