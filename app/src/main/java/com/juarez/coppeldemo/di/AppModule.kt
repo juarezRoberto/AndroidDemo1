@@ -12,6 +12,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -30,6 +31,6 @@ object AppModule {
         heroDao: HeroDao,
         getHeroesService: GetHeroesService,
     ): HeroRepository {
-        return HeroRepositoryImp(heroAPI, heroDao, getHeroesService)
+        return HeroRepositoryImp(Dispatchers.IO, heroAPI, heroDao, getHeroesService)
     }
 }

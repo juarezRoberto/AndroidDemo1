@@ -9,11 +9,13 @@ import com.juarez.coppeldemo.heroes.heroes.data.GetHeroesService
 import com.juarez.coppeldemo.heroes.heroes.data.HeroesPagingSource
 import com.juarez.coppeldemo.utils.Constants
 import com.juarez.coppeldemo.utils.NetworkResponse
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -27,6 +29,7 @@ interface HeroRepository {
 }
 
 class HeroRepositoryImp(
+    private val defaultDispatcher: CoroutineDispatcher,
     private val heroAPI: HeroAPI,
     private val heroDao: HeroDao,
     private val getHeroesService: GetHeroesService,
@@ -81,7 +84,7 @@ class HeroRepositoryImp(
     private suspend fun getHeroImage(heroId: Int): NetworkResponse<Image> {
         var image = Image()
         return try {
-            val imageRes = heroAPI.getHeroImage(heroId)
+            val imageRes = withContext(defaultDispatcher) { heroAPI.getHeroImage(heroId) }
             if (!imageRes.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
             imageRes.body()?.let {
                 image = Image(it.url)
@@ -97,7 +100,8 @@ class HeroRepositoryImp(
     private suspend fun getHeroPowerStats(heroId: Int): NetworkResponse<PowerStats> {
         var powerStats = PowerStats()
         return try {
-            val power = heroAPI.getHeroPowerStats(heroId)
+            val power = withContext(defaultDispatcher) { heroAPI.getHeroPowerStats(heroId) }
+
             if (!power.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
             power.body()?.let {
                 powerStats = PowerStats(
@@ -116,7 +120,7 @@ class HeroRepositoryImp(
     private suspend fun getHeroBiography(heroId: Int): NetworkResponse<Biography> {
         var biography = Biography()
         return try {
-            val bio = heroAPI.getHeroBiography(heroId)
+            val bio = withContext(defaultDispatcher) { heroAPI.getHeroBiography(heroId) }
             if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
             bio.body()?.let {
                 biography = Biography(
@@ -135,7 +139,7 @@ class HeroRepositoryImp(
     private suspend fun getHeroAppearance(heroId: Int): NetworkResponse<Appearance> {
         var appearance = Appearance()
         return try {
-            val bio = heroAPI.getHeroAppearance(heroId)
+            val bio = withContext(defaultDispatcher) { heroAPI.getHeroAppearance(heroId) }
             if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
             bio.body()?.let {
                 appearance = Appearance(
@@ -153,7 +157,7 @@ class HeroRepositoryImp(
     private suspend fun getHeroConnections(heroId: Int): NetworkResponse<Connections> {
         var connections = Connections()
         return try {
-            val bio = heroAPI.getHeroConnections(heroId)
+            val bio = withContext(defaultDispatcher) { heroAPI.getHeroConnections(heroId) }
             if (!bio.isSuccessful) throw Exception(Constants.GENERAL_ERROR)
             bio.body()?.let {
                 connections = Connections(it.groupAffiliation, it.relatives)
@@ -166,11 +170,17 @@ class HeroRepositoryImp(
         }
     }
 
-    override suspend fun saveFavoriteHero(hero: Hero) = heroDao.insert(hero.toEntity())
+    override suspend fun saveFavoriteHero(hero: Hero) = withContext(defaultDispatcher) {
+        heroDao.insert(hero.toEntity())
+    }
 
-    override suspend fun getFavoriteById(heroId: Int) = heroDao.getFavoriteHeroById(heroId)
+    override suspend fun getFavoriteById(heroId: Int) = withContext(defaultDispatcher) {
+        heroDao.getFavoriteHeroById(heroId)
+    }
 
-    override suspend fun removeFavoriteHero(heroId: Int) = heroDao.removeFavoriteHero(heroId)
+    override suspend fun removeFavoriteHero(heroId: Int) = withContext(defaultDispatcher) {
+        heroDao.removeFavoriteHero(heroId)
+    }
 
     override val favoriteHeroes: Flow<List<Hero>> = heroDao.getAllHeroes().map { heroEntities ->
         heroEntities.map { heroEntity -> heroEntity.toModel() }
