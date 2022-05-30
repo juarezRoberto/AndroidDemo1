@@ -16,17 +16,19 @@ This app is built with the following technologies:
 
 [Room](https://developer.android.com/training/data-storage/room) The Room persistence library provides an abstraction layer over SQLite to allow fluent database access while harnessing the full power of SQLite.
 
-[Navigatio Component](https://developer.android.com/guide/navigation/navigation-getting-started) Android Jetpack's Navigation component helps you implement navigation, from simple button clicks to more complex patterns, such as app bars and the navigation drawer. 
+[Navigation Component](https://developer.android.com/guide/navigation/navigation-getting-started) Android Jetpack's Navigation component helps you implement navigation, from simple button clicks to more complex patterns, such as app bars and the navigation drawer. 
 
 [Kotlin Flows](https://developer.android.com/kotlin/flow) In coroutines, a flow is a type that can emit multiple values sequentially, as opposed to suspend functions that return only a single value.
 
 [Pagging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) The Paging library helps you load and display pages of data from a larger dataset from local storage or over network.
 
-[DataStore](https://developer.android.com/topic/libraries/architecture/datastore) Jetpack DataStore is a data storage solution that allows you to store key-value pairs or typed objects with protocol buffers.
+[View Binding](https://developer.android.com/topic/libraries/view-binding) View binding is a feature that allows you to more easily write code that interacts with views.
 
 [Coroutines](https://developer.android.com/kotlin/coroutines) A coroutine is a concurrency design pattern that you can use on Android to simplify code that executes asynchronously.
 
 [Coroutines Best Practices](https://developer.android.com/kotlin/coroutines/coroutines-best-practices) Best practices that have a positive impact by making your app more scalable and testable when using coroutines.
+
+[DataStore](https://developer.android.com/topic/libraries/architecture/datastore) Jetpack DataStore is a data storage solution that allows you to store key-value pairs or typed objects with protocol buffers.
 
 [Glide](https://github.com/bumptech/glide) Glide is a fast and efficient open source media management and image loading framework for Android that wraps media decoding, memory and disk caching, and resource pooling into a simple and easy to use interface.
 
