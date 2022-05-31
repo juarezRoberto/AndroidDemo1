@@ -1,12 +1,13 @@
 package com.juarez.coppeldemo.utils
 
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
 import com.juarez.coppeldemo.R
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -22,9 +23,9 @@ fun String.convertToInt(): Int {
     }
 }
 
-fun ImageView.loadImage(url: String?) {
+fun ImageView.loadImage(url: String?, @DrawableRes error: Int = R.drawable.hero_placeholder) {
     if (!url.isNullOrEmpty()) {
-        Picasso.get().load(url).error(R.drawable.hero_placeholder).into(this)
+        Glide.with(this).load(url).error(error).into(this)
     }
 }
 

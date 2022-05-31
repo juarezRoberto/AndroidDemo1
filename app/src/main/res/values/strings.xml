@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CoppelDemo</string>
+    <string name="app_name">Demo1</string>
     <string name="placeholder_power">Power:</string>
     <string name="placeholder_intelligence">Intelligence:</string>
     <string name="placeholder_strength">Strength:</string>

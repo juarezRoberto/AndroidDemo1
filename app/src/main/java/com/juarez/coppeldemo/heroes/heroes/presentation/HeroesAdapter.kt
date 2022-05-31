@@ -6,10 +6,9 @@ import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.juarez.coppeldemo.R
 import com.juarez.coppeldemo.databinding.ItemHeroBinding
 import com.juarez.coppeldemo.heroes.data.Hero
-import com.squareup.picasso.Picasso
+import com.juarez.coppeldemo.utils.loadImage
 
 class HeroesAdapter(private val onItemClicked: (Hero) -> Unit) :
     PagingDataAdapter<Hero, HeroesAdapter.HeroViewHolder>(HeroComparator) {
@@ -26,10 +25,7 @@ class HeroesAdapter(private val onItemClicked: (Hero) -> Unit) :
         item?.let {
             with(holder) {
                 binding.txtName.text = it.name
-                Picasso.get()
-                    .load(it.image.url)
-                    .error(R.drawable.hero_placeholder)
-                    .into(binding.imgPhoto)
+                binding.imgPhoto.loadImage(it.image.url)
                 this.itemView.setOnClickListener { onItemClicked(item) }
                 binding.btnRemoveFavorite.isVisible = false
             }

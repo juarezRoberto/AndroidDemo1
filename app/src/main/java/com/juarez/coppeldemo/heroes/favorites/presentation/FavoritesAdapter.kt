@@ -5,10 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.juarez.coppeldemo.R
 import com.juarez.coppeldemo.databinding.ItemHeroBinding
 import com.juarez.coppeldemo.heroes.data.Hero
-import com.squareup.picasso.Picasso
+import com.juarez.coppeldemo.utils.loadImage
 
 class FavoritesAdapter(
     private val onItemClickListener: (user: Hero) -> Unit,
@@ -28,10 +27,7 @@ class FavoritesAdapter(
 
             binding.txtName.text = favorite.name
             if (!favorite.image.url.isNullOrEmpty()) {
-                Picasso.get()
-                    .load(favorite.image.url)
-                    .error(R.drawable.hero_placeholder)
-                    .into(binding.imgPhoto)
+                binding.imgPhoto.loadImage(favorite.image.url)
             }
 
             binding.btnRemoveFavorite.setOnClickListener {
