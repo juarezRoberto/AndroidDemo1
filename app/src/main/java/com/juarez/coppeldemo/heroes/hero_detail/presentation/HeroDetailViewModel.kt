@@ -7,6 +7,8 @@ import com.juarez.coppeldemo.heroes.data.Hero
 import com.juarez.coppeldemo.heroes.hero_detail.domain.GetHeroDetailUseCase
 import com.juarez.coppeldemo.heroes.hero_detail.domain.IsFavoriteHeroUseCase
 import com.juarez.coppeldemo.heroes.hero_detail.domain.SaveFavoriteHeroUseCase
+import com.juarez.coppeldemo.utils.Constants.DEFAULT_HERO_URL
+import com.juarez.coppeldemo.utils.Constants.HERO_URL_STATE_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,14 +20,24 @@ class HeroDetailViewModel @Inject constructor(
     private val saveFavoriteHeroUseCase: SaveFavoriteHeroUseCase,
     private val isFavoriteHeroUseCase: IsFavoriteHeroUseCase,
     private val state: SavedStateHandle,
-) :
-    ViewModel() {
+) : ViewModel() {
+
+    private val _url = MutableStateFlow(state[HERO_URL_STATE_KEY] ?: DEFAULT_HERO_URL)
+    val url = _url.asStateFlow()
+
+    /**
+     * update url and set value in state
+     */
+    private fun saveUrl(url: String) {
+        _url.value = url
+        state[HERO_URL_STATE_KEY] = url
+    }
+
+
     private val _isFavorite = MutableStateFlow(false)
     val isFavorite: StateFlow<Boolean> = _isFavorite
     private val _hero = MutableStateFlow(Hero())
     val hero: StateFlow<Hero> = _hero
-    private val _url = MutableStateFlow(state.get("hero_url") ?: "")
-    val url: StateFlow<String> = _url
 
     private val _heroState = MutableStateFlow<HeroState>(HeroState.Empty)
     val heroState: StateFlow<HeroState> = _heroState
@@ -52,11 +64,5 @@ class HeroDetailViewModel @Inject constructor(
         isFavoriteHeroUseCase(heroId).also { _isFavorite.value = it }
     }
 
-    /**
-     * update url and set value in state
-     */
-    private fun saveUrl(url: String) {
-        _url.value = url
-        state.set("hero_url", url)
-    }
+
 }
